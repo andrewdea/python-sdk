@@ -18,7 +18,11 @@
 Models module
 """
 
-from typing import List
+from typing import List, Optional, Literal, Any, Tuple
+from cldk.analysis.commons.hammock_blocks.models import (
+    HammockBlock,
+    HammockBlockRelation,
+)
 from pydantic import BaseModel
 
 
@@ -59,12 +63,112 @@ class PyMethod(BaseModel):
     end_line: int
 
 
+class PySymbol(BaseModel):
+    """Represents a symbol used or declared in Python code."""
+
+    name: str
+    scope: Literal["local", "nonlocal", "global", "class", "module"]
+    kind: Literal["variable", "parameter", "attribute", "function", "class", "module"]
+    type: Optional[str] = None
+    qualified_name: Optional[str] = None
+    is_builtin: bool = False
+    lineno: int = -1
+    col_offset: int = -1
+
+
+class PyComment(BaseModel):
+    """Represents a Python comment."""
+
+    content: str
+    start_line: int = -1
+    end_line: int = -1
+    start_column: int = -1
+    end_column: int = -1
+    is_docstring: bool = False
+
+
+# TODO rename this to PyCallSite for consistency
+class PyCallsite(BaseModel):
+    """Represents a Python call site (function or method invocation) with contextual metadata."""
+
+    method_name: str
+    receiver_expr: Optional[str] = None
+    receiver_type: Optional[str] = None
+    argument_types: List[str] = []
+    return_type: Optional[str] = None
+    callee_signature: Optional[str] = None
+    is_constructor_call: bool = False
+    start_line: int = -1
+    start_column: int = -1
+    end_line: int = -1
+    end_column: int = -1
+
+
+class PyClassAttribute(BaseModel):
+    """Represents a Python class attribute."""
+
+    name: str
+    type: Optional[str] = None
+    comments: List[PyComment] = []
+    start_line: int = -1
+    end_line: int = -1
+
+
+class PyVariableDeclaration(BaseModel):
+    """Represents a Python variable declaration."""
+
+    name: str
+    type: Optional[str]
+    initializer: Optional[str] = None
+    value: Optional[Any] = None
+    scope: Literal["module", "class", "function"] = "module"
+    start_line: int = -1
+    end_line: int = -1
+    start_column: int = -1
+    end_column: int = -1
+
+
+class PyCallableParameter(BaseModel):
+    """Represents a parameter of a Python callable (function/method)."""
+
+    name: str
+    type: Optional[str] = None
+    default_value: Optional[str] = None
+    start_line: int = -1
+    end_line: int = -1
+    start_column: int = -1
+    end_column: int = -1
+
+
+class PyHammockBlock(HammockBlock):
+    """Represents a Hammock block in Python code."""
+
+    call_sites: List[PyCallsite] = []
+    local_variables: List[PyVariableDeclaration] = []
+    accessed_variables: List[PySymbol] = []
+    class_attributes: List[PyVariableDeclaration] = []
+    func_parameters: List[PyCallableParameter] = []
+    relations: List["PyHammockBlockRelation"] = []
+
+
+class PyHammockBlockRelation(HammockBlockRelation):
+    """Represents a Hammock block relation in Python code."""
+
+    related_variables: Optional[
+        Tuple[
+            PySymbol,
+            Optional[PyVariableDeclaration | PyCallableParameter | PyClassAttribute],
+        ]
+    ] = None
+    related_call_site: Optional[PyCallsite] = None
+
+
 class PyClass(BaseModel):
     code_body: str
     full_signature: str
     super_classes: List[str]
     is_test_class: bool
-    class_name: str = None
+    class_name: str
     methods: List[PyMethod]
 
 

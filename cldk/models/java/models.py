@@ -17,7 +17,12 @@
 """
 Models module
 """
+
 from typing import Any, Dict, List, Optional, Union
+from cldk.analysis.commons.hammock_blocks.models import (
+    HammockBlock,
+    HammockBlockRelation,
+)
 from pydantic import BaseModel, field_validator
 from cldk.models.java.enums import CRUDOperationType, CRUDQueryType
 
@@ -221,6 +226,31 @@ class JVariableDeclaration(BaseModel):
     end_column: int
 
 
+class JHammockBlock(HammockBlock):
+    """Represents a Hammock block in Java code."""
+
+    call_sites: List[JCallSite] = []
+    local_variables: List[JVariableDeclaration] = []
+    # would there even be the equivalent of PySymbol in Java?
+    # accessed_variables: List[JSymbol] = []
+    class_attributes: List[JVariableDeclaration] = []
+    func_parameters: List[JCallableParameter] = []
+    relations: List["JHammockBlockRelation"] = []
+
+
+class JHammockBlockRelation(HammockBlockRelation):
+    """Represents a Hammock block relation in Java code."""
+
+    # not sure if we want to add anything here
+    # related_variables: Optional[
+    #     Tuple[
+    #         PySymbol,
+    #         Optional[PyVariableDeclaration | PyCallableParameter | PyClassAttribute],
+    #     ]
+    # ] = None
+    # related_call_site: Optional[PyCallsite] = None
+
+
 class InitializationBlock(BaseModel):
     """Represents an initialization block in Java.
 
@@ -305,6 +335,7 @@ class JCallable(BaseModel):
     crud_operations: List[JCRUDOperation] | None
     crud_queries: List[JCRUDQuery] | None
     cyclomatic_complexity: int | None
+    hammock_block: Optional[JHammockBlock] = None
 
     def __hash__(self):
         """
@@ -380,6 +411,7 @@ class JCompilationUnit(BaseModel):
     imports: List[str]
     type_declarations: Dict[str, JType]
     is_modified: bool = False
+    hammock_block: Optional[JHammockBlock] = None
 
 
 class JMethodDetail(BaseModel):
@@ -434,7 +466,11 @@ class JGraphEdges(BaseModel):
     @field_validator("source", "target", mode="before")
     @classmethod
     def validate_source(cls, value) -> JMethodDetail:
-        _, type_declaration, signature = value["file_path"], value["type_declaration"], value["signature"]
+        _, type_declaration, signature = (
+            value["file_path"],
+            value["type_declaration"],
+            value["signature"],
+        )
         j_callable: JCallable = _CALLABLES_LOOKUP_TABLE.get(
             (type_declaration, signature),
             JCallable(
@@ -447,8 +483,20 @@ class JGraphEdges(BaseModel):
                 thrown_exceptions=[],
                 declaration="",
                 parameters=[
-                    JCallableParameter(name=None, type=t, annotations=[], modifiers=[], start_column=-1, end_column=-1, start_line=-1, end_line=-1)
-                    for t in value["callable_declaration"].split("(")[1].split(")")[0].split(",")
+                    JCallableParameter(
+                        name=None,
+                        type=t,
+                        annotations=[],
+                        modifiers=[],
+                        start_column=-1,
+                        end_column=-1,
+                        start_line=-1,
+                        end_line=-1,
+                    )
+                    for t in value["callable_declaration"]
+                    .split("(")[1]
+                    .split(")")[0]
+                    .split(",")
                 ],
                 return_type=None,
                 code="",
@@ -468,7 +516,9 @@ class JGraphEdges(BaseModel):
         _CALLABLES_LOOKUP_TABLE[(type_declaration, signature)] = j_callable
         class_name = type_declaration
         method_decl = j_callable.declaration
-        return JMethodDetail(method_declaration=method_decl, klass=class_name, method=j_callable)
+        return JMethodDetail(
+            method_declaration=method_decl, klass=class_name, method=j_callable
+        )
 
     def __hash__(self):
         return hash(tuple(self))
@@ -497,6 +547,8 @@ class JApplication(BaseModel):
         for _, j_compulation_unit in symbol_table.items():
             for type_declaration, jtype in j_compulation_unit.type_declarations.items():
                 for __, j_callable in jtype.callable_declarations.items():
-                    _CALLABLES_LOOKUP_TABLE[(type_declaration, j_callable.signature)] = j_callable
+                    _CALLABLES_LOOKUP_TABLE[
+                        (type_declaration, j_callable.signature)
+                    ] = j_callable
 
         return symbol_table
