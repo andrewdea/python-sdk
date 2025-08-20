@@ -1,7 +1,8 @@
 import os
-from typing import Optional, Dict, Tuple
+from typing import Optional, Dict, Tuple, Union
 from cldk.analysis.commons.hammock_blocks.hb_definition import TSHammockBlock
 from cldk.analysis.commons.hammock_blocks.hbt_parser import PyHbtParser
+from cldk.models.java.models import JHammockBlock
 from cldk.models.python.models import (
     PyHammockBlock,
     PyHammockBlockRelation,
@@ -26,21 +27,24 @@ class HammockBlockTreeBuilder:
         source: str,
         filename: str,
         project_base: str,
+        language: str,
         # TODO rather than return this confusing Tuple, maybe let's define a HB Tree Class?
-    ) -> Tuple[TSHammockBlock, Dict, Dict]:
+    ) -> Tuple[Optional[TSHammockBlock], Optional[Dict], Optional[Dict]]:
         """
         Parses the source code and returns a Hammock block tree instance.
         """
-        hbt_parser = PyHbtParser(source, filename, project_base)
+        hbt_parser = PyHbtParser(source, filename, project_base, language)
         ori_hbt_map = hbt_parser.get_full_pdg_map(filename)
+        if ori_hbt_map is None:
+            return None, None, None
         py_hbt_root, converted_hbt_map = HammockBlockTreeBuilder._convert_to_hbt(
-            ori_hbt_map
+            ori_hbt_map, language
         )
         return py_hbt_root, converted_hbt_map, ori_hbt_map
 
     @staticmethod
     def _convert_to_hbt(
-        ori_hbt_map: dict,
+        ori_hbt_map: dict, language: str
     ) -> Tuple[Optional[TSHammockBlock], Optional[Dict]]:
         """
         Converts the original Hammock Block map to a TSHammockBlock instance.
@@ -51,34 +55,73 @@ class HammockBlockTreeBuilder:
         converted_hbt_map = {"hammock_blocks": []}
         # Step 1: find the root block to the subtree in the map
         list_of_hbs = ori_hbt_map["hammock_blocks"]
+        tshbt_root = None
+        match language.lower():
+            case "python":
+                root_type = "module"
+            case "java":
+                root_type = "program"
+            case _:
+                raise NotImplementedError(
+                    f"this language is not currently supported: {language}"
+                )
         for hb in list_of_hbs:
-            if hb.block_type == "module":
+            if hb.block_type == root_type:
                 assert hb.parent is None, "Root block should not have a parent."
                 tshbt_root = hb
                 break
 
+        if tshbt_root is None:
+            print(
+                f"From: _convert_to_hbt; line number: 65; returning None, since tshbt_root is None"
+            )
+            return None, None
+
         # Step 2: traverse the TSHammockBlock subtree and build PyHammockBlock objects
-        def traverse_hbt(node: TSHammockBlock) -> PyHammockBlock:
+        def traverse_hbt(node: TSHammockBlock) -> Union[PyHammockBlock, JHammockBlock]:
             """Recursively traverse TSHammockBlock tree and build PyHammockBlock objects."""
             children = []
             for child in node.children:
                 children.append(traverse_hbt(child))
-            py_hammock_block = PyHammockBlock(
-                block_id=node.block_id,
-                block_full_qualifier=node.block_full_qualifier,
-                project_full_qualifier=node.project_full_qualifier,
-                block_type=node.block_type,
-                start_line=node.start_point.row + 1 if node.start_point else -1,
-                end_line=node.end_point.row + 1 if node.end_point else -1,
-                children=[child.block_id for child in children],
-                meta_data=node.meta_data,
-                local_variables=[],
-                accessed_variables=[],
-                call_sites=[],
-                relations=[],
-                class_attributes=[],
-                func_parameters=[],
-            )
+            match language.lower():
+                case "python":
+                    lang_hammock_block = PyHammockBlock(
+                        block_id=node.block_id,
+                        block_full_qualifier=node.block_full_qualifier,
+                        project_full_qualifier=node.project_full_qualifier,
+                        block_type=node.block_type,
+                        start_line=node.start_point.row + 1 if node.start_point else -1,
+                        end_line=node.end_point.row + 1 if node.end_point else -1,
+                        children=[child.block_id for child in children],
+                        meta_data=node.meta_data,
+                        local_variables=[],
+                        accessed_variables=[],
+                        call_sites=[],
+                        relations=[],
+                        class_attributes=[],
+                        func_parameters=[],
+                    )
+                case "java":
+                    lang_hammock_block = JHammockBlock(
+                        block_id=node.block_id,
+                        block_full_qualifier=node.block_full_qualifier,
+                        project_full_qualifier=node.project_full_qualifier,
+                        block_type=node.block_type,
+                        start_line=node.start_point.row + 1 if node.start_point else -1,
+                        end_line=node.end_point.row + 1 if node.end_point else -1,
+                        children=[child.block_id for child in children],
+                        meta_data=node.meta_data,
+                        local_variables=[],
+                        accessed_variables=[],
+                        call_sites=[],
+                        relations=[],
+                        class_attributes=[],
+                        func_parameters=[],
+                    )
+                case _:
+                    raise NotImplementedError(
+                        f"this language is not currently supported: {language}"
+                    )
 
             # (
             #     PyHammockBlock.builder()
@@ -98,15 +141,16 @@ class HammockBlockTreeBuilder:
             #     .func_parameters([])
             #     .build()
             # )
-            converted_hbt_map["hammock_blocks"].append(py_hammock_block)
-            return py_hammock_block
+            converted_hbt_map["hammock_blocks"].append(lang_hammock_block)
+            return lang_hammock_block
 
-        py_hbt_root = traverse_hbt(tshbt_root)
+        lang_hbt_root = traverse_hbt(tshbt_root)
 
         # Step 3: fix parent relationships notice that
         # parent of the root does not matter, only considering subtree
         def fix_parent_relationships(
-            node: PyHammockBlock, parent: PyHammockBlock = None
+            node: Union[PyHammockBlock, JHammockBlock],
+            parent: Optional[Union[PyHammockBlock, JHammockBlock]] = None,
         ):
             """Recursively fix parent relationships in PyHammockBlock tree."""
             node.parent = parent.block_id if parent else None
@@ -117,8 +161,8 @@ class HammockBlockTreeBuilder:
                         break
                 fix_parent_relationships(child_node, node)
 
-        fix_parent_relationships(py_hbt_root)
-        return py_hbt_root, converted_hbt_map
+        fix_parent_relationships(lang_hbt_root)
+        return lang_hbt_root, converted_hbt_map
 
     @staticmethod
     def build_hb_data_relations(converted_hbt_map):

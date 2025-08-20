@@ -8,6 +8,7 @@ import cldk.analysis.commons.hammock_blocks.hbt_python_rules as hbt_python_rules
 
 # import cldk.analysis.commons.hammock_blocks.hbt_configs as hbt_configs
 import tree_sitter_python as tspython
+import tree_sitter_java as tsjava
 import os
 import pickle
 import glob
@@ -19,8 +20,11 @@ class PyHbtParser:
         source: str,
         filename: str,
         project_base: str,
+        language: str = "python",
         source_code_dir_list: list = [],
-        parsing_mode: str = "rule-based",
+        # TODO: change back to rule-based in order to
+        # develop the Java rules properly
+        parsing_mode: str = "simple",
     ):
         self.block_map = {}  # block_id to TSHammockBlock
         self.tstree_map = {}  # source_file to tree-sitter tree
@@ -33,8 +37,17 @@ class PyHbtParser:
         if self.parsing_mode not in ["rule-based", "simple"]:
             raise ValueError(f"Unsupported parsing mode: {self.parsing_mode}")
 
-        py_language = Language(tspython.language())
-        self.parser = Parser(py_language)
+        # get the appropriate tree-sitter lang
+        match language.lower():
+            case "java":
+                ts_language = Language(tsjava.language())
+            case "python":
+                ts_language = Language(tspython.language())
+            case _:
+                raise NotImplementedError(
+                    f"This language is not supported yet: {language}"
+                )
+        self.parser = Parser(ts_language)
         self.src_file_to_dir_map = {
             filename: os.path.dirname(filename),
             "project_base": project_base,
@@ -108,7 +121,8 @@ class PyHbtParser:
         pdg["meta_data"]["source_file"] = source_file
 
         # post processing all hammock blocks
-        self.parsing_rules._post_process_hammock_blocks(pdg, self.block_map)
+        if self.parsing_mode != "simple":
+            self.parsing_rules._post_process_hammock_blocks(pdg, self.block_map)
 
         return pdg
 
