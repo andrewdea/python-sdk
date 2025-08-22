@@ -5,6 +5,8 @@ from cldk.analysis.commons.hammock_blocks.hb_definition import (
 )
 from typing import Dict, List, Optional, Tuple
 import cldk.analysis.commons.hammock_blocks.hbt_python_rules as hbt_python_rules
+import cldk.analysis.commons.hammock_blocks.hbt_java_rules as hbt_java_rules
+from cldk.analysis.commons.hammock_blocks.data_types import ParsingMode
 
 # import cldk.analysis.commons.hammock_blocks.hbt_configs as hbt_configs
 import tree_sitter_python as tspython
@@ -24,7 +26,7 @@ class PyHbtParser:
         source_code_dir_list: list = [],
         # TODO: change back to rule-based in order to
         # develop the Java rules properly
-        parsing_mode: str = "simple",
+        parsing_mode: ParsingMode = ParsingMode.rule_based,
     ):
         self.block_map = {}  # block_id to TSHammockBlock
         self.tstree_map = {}  # source_file to tree-sitter tree
@@ -32,10 +34,6 @@ class PyHbtParser:
         self.parsing_mode = parsing_mode
         # self.parsing_rules = None
         self.project_base = project_base
-
-        # Import the parsing rules based on the mode
-        if self.parsing_mode not in ["rule-based", "simple"]:
-            raise ValueError(f"Unsupported parsing mode: {self.parsing_mode}")
 
         # get the appropriate tree-sitter lang
         match language.lower():
@@ -52,12 +50,25 @@ class PyHbtParser:
             filename: os.path.dirname(filename),
             "project_base": project_base,
         }
-        if self.parsing_mode != "simple":
-            self.parsing_rules = hbt_python_rules.PythonTSHBParsingRules(
-                source_code_dir_list,
-                self.src_file_to_dir_map,
-                # cg_backend=hbt_configs.PY_CG_BACKEND,
-            )
+        # Import the parsing rules based on the mode
+        if self.parsing_mode == ParsingMode.rule_based:
+            match language.lower():
+                case "java":
+                    self.parsing_rules = hbt_java_rules.JavaTSHBParsingRules(
+                        source_code_dir_list,
+                        self.src_file_to_dir_map,
+                        # cg_backend=hbt_configs.PY_CG_BACKEND,
+                    )
+                case "python":
+                    self.parsing_rules = hbt_python_rules.PythonTSHBParsingRules(
+                        source_code_dir_list,
+                        self.src_file_to_dir_map,
+                        # cg_backend=hbt_configs.PY_CG_BACKEND,
+                    )
+                case _:
+                    raise NotImplementedError(
+                        f"This language is not supported yet: {language}"
+                    )
 
         # Parse the source code files to create the tree-sitter trees from source files
         self._parse_source_code_to_ts_tree(source, filename)
@@ -130,7 +141,7 @@ class PyHbtParser:
         self, node: Node, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:
         # Process using simple parsing rules and logics.
-        if self.parsing_mode == "simple":
+        if self.parsing_mode == ParsingMode.simple:
             block_id = node.id
             block_type = node.type
             start_point = node.start_point
@@ -185,13 +196,14 @@ class PyHbtParser:
                 return hammock_block, []
 
         # Process using rules and logics.
-        elif self.parsing_mode == "rule-based":
+        elif self.parsing_mode == ParsingMode.rule_based:
             block_id = node.id
             hammock_block, additional_blocks_list = self.parsing_rules.parse_ts_node(
                 node, self.block_map, source_file
             )
 
             if hammock_block is not None:
+                print(f"hammock_block is not None : {hammock_block is not None}")
                 # Add block if not None
                 assert (
                     block_id not in self.block_map
@@ -215,22 +227,24 @@ class PyHbtParser:
                         # Add the hammock block to the parent's children
                         hammock_block.parent.children_ids.append(block_id)
             else:
+                # print(f"hammock_block is None")
                 # Otherwise this block is not relevant for the PDG
                 parent_id = node.parent.id if node.parent else None
                 if parent_id is not None and parent_id in self.block_map:
                     self.block_map[parent_id].discard_children_ids.append(block_id)
+
             return hammock_block, additional_blocks_list
 
     def _construct_children_from_hammock_blocks(
         self, hammock_blocks: List[TSHammockBlock]
     ):
-        if self.parsing_mode == "simple":
+        if self.parsing_mode == ParsingMode.simple:
             # Establish the children relationships
             for hammock_block in hammock_blocks:
                 for child_id in hammock_block.children_ids:
                     if child_id in self.block_map:
                         hammock_block.children.append(self.block_map[child_id])
-        elif self.parsing_mode == "rule-based":
+        elif self.parsing_mode == ParsingMode.rule_based:
             for hammock_block in hammock_blocks:
                 present = set()
                 for child_block in hammock_block.children:
