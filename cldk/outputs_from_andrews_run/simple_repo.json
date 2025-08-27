@@ -1,0 +1,580 @@
+{
+  "symbol_table": {
+    "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/main.py": {
+      "file_path": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/main.py",
+      "hammock_block": {
+        "block_id": 4383543536,
+        "block_full_qualifier": "main",
+        "project_full_qualifier": "src.main",
+        "block_type": "module",
+        "start_line": 1,
+        "end_line": 22,
+        "meta_data": {
+          "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/main.py"
+        },
+        "children": [
+          4384168176,
+          4384169616,
+          4384170288,
+          4384168848,
+          4384430320,
+          4384428208,
+          4384430328
+        ],
+        "parent": null,
+        "call_sites": [],
+        "local_variables": [],
+        "accessed_variables": [],
+        "class_attributes": [],
+        "func_parameters": [],
+        "relations": []
+      },
+      "module_hammock_blocks": [
+        {
+          "block_id": 4384168176,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "import_from_statement",
+          "start_line": 1,
+          "end_line": 1,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/main.py"
+          },
+          "children": [],
+          "parent": 4383543536,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384169616,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "import_from_statement",
+          "start_line": 3,
+          "end_line": 3,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/main.py"
+          },
+          "children": [],
+          "parent": 4383543536,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384170288,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "expression_statement",
+          "start_line": 5,
+          "end_line": 6,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/main.py"
+          },
+          "children": [],
+          "parent": 4383543536,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384168848,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "import_from_statement",
+          "start_line": 2,
+          "end_line": 2,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/main.py"
+          },
+          "children": [],
+          "parent": 4383543536,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384171920,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "expression_statement",
+          "start_line": 9,
+          "end_line": 10,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/main.py"
+          },
+          "children": [],
+          "parent": 4384430320,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384430320,
+          "block_full_qualifier": "main.submain",
+          "project_full_qualifier": "src.main.submain",
+          "block_type": "function_definition",
+          "start_line": 8,
+          "end_line": 11,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/main.py"
+          },
+          "children": [
+            4384171920
+          ],
+          "parent": 4383543536,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384428208,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "expression_statement",
+          "start_line": 22,
+          "end_line": 22,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/main.py"
+          },
+          "children": [],
+          "parent": 4383543536,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384174896,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "expression_statement",
+          "start_line": 14,
+          "end_line": 19,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/main.py"
+          },
+          "children": [],
+          "parent": 4384430328,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384430328,
+          "block_full_qualifier": "main.main",
+          "project_full_qualifier": "src.main.main",
+          "block_type": "function_definition",
+          "start_line": 13,
+          "end_line": 19,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/main.py"
+          },
+          "children": [
+            4384174896
+          ],
+          "parent": 4383543536,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4383543536,
+          "block_full_qualifier": "main",
+          "project_full_qualifier": "src.main",
+          "block_type": "module",
+          "start_line": 1,
+          "end_line": 22,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/main.py"
+          },
+          "children": [
+            4384168176,
+            4384169616,
+            4384170288,
+            4384168848,
+            4384430320,
+            4384428208,
+            4384430328
+          ],
+          "parent": null,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        }
+      ]
+    },
+    "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module1.py": {
+      "file_path": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module1.py",
+      "hammock_block": {
+        "block_id": 4383547024,
+        "block_full_qualifier": "module1",
+        "project_full_qualifier": "src.sub_folder1.module1",
+        "block_type": "module",
+        "start_line": 1,
+        "end_line": 7,
+        "meta_data": {
+          "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module1.py"
+        },
+        "children": [
+          4384433872
+        ],
+        "parent": null,
+        "call_sites": [],
+        "local_variables": [],
+        "accessed_variables": [],
+        "class_attributes": [],
+        "func_parameters": [],
+        "relations": []
+      },
+      "module_hammock_blocks": [
+        {
+          "block_id": 4384433592,
+          "block_full_qualifier": "module1.Module1.helper",
+          "project_full_qualifier": "src.sub_folder1.module1.Module1.helper",
+          "block_type": "function_definition",
+          "start_line": 6,
+          "end_line": 7,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module1.py"
+          },
+          "children": [],
+          "parent": 4384433872,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384430992,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "expression_statement",
+          "start_line": 3,
+          "end_line": 3,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module1.py"
+          },
+          "children": [],
+          "parent": 4384433584,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384433584,
+          "block_full_qualifier": "module1.Module1.add",
+          "project_full_qualifier": "src.sub_folder1.module1.Module1.add",
+          "block_type": "function_definition",
+          "start_line": 2,
+          "end_line": 4,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module1.py"
+          },
+          "children": [
+            4384430992
+          ],
+          "parent": 4384433872,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384433872,
+          "block_full_qualifier": "module1.Module1",
+          "project_full_qualifier": "src.sub_folder1.module1.Module1",
+          "block_type": "class_definition",
+          "start_line": 1,
+          "end_line": 7,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module1.py"
+          },
+          "children": [
+            4384433592,
+            4384433584
+          ],
+          "parent": 4383547024,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4383547024,
+          "block_full_qualifier": "module1",
+          "project_full_qualifier": "src.sub_folder1.module1",
+          "block_type": "module",
+          "start_line": 1,
+          "end_line": 7,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module1.py"
+          },
+          "children": [
+            4384433872
+          ],
+          "parent": null,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        }
+      ]
+    },
+    "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module2.py": {
+      "file_path": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module2.py",
+      "hammock_block": {
+        "block_id": 4383543504,
+        "block_full_qualifier": "module2",
+        "project_full_qualifier": "src.sub_folder1.module2",
+        "block_type": "module",
+        "start_line": 1,
+        "end_line": 8,
+        "meta_data": {
+          "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module2.py"
+        },
+        "children": [
+          4384438960
+        ],
+        "parent": null,
+        "call_sites": [],
+        "local_variables": [],
+        "accessed_variables": [],
+        "class_attributes": [],
+        "func_parameters": [],
+        "relations": []
+      },
+      "module_hammock_blocks": [
+        {
+          "block_id": 4384436176,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "expression_statement",
+          "start_line": 4,
+          "end_line": 4,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module2.py"
+          },
+          "children": [],
+          "parent": 4384437240,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384437240,
+          "block_full_qualifier": "module2.Module2.minus",
+          "project_full_qualifier": "src.sub_folder1.module2.Module2.minus",
+          "block_type": "function_definition",
+          "start_line": 3,
+          "end_line": 5,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module2.py"
+          },
+          "children": [
+            4384436176
+          ],
+          "parent": 4384438960,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384438680,
+          "block_full_qualifier": "module2.Module2.add",
+          "project_full_qualifier": "src.sub_folder1.module2.Module2.add",
+          "block_type": "function_definition",
+          "start_line": 7,
+          "end_line": 8,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module2.py"
+          },
+          "children": [],
+          "parent": 4384438960,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384434736,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "expression_statement",
+          "start_line": 2,
+          "end_line": 2,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module2.py"
+          },
+          "children": [],
+          "parent": 4384438960,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4384438960,
+          "block_full_qualifier": "module2.Module2",
+          "project_full_qualifier": "src.sub_folder1.module2.Module2",
+          "block_type": "class_definition",
+          "start_line": 1,
+          "end_line": 8,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module2.py"
+          },
+          "children": [
+            4384437240,
+            4384438680,
+            4384434736
+          ],
+          "parent": 4383543504,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4383543504,
+          "block_full_qualifier": "module2",
+          "project_full_qualifier": "src.sub_folder1.module2",
+          "block_type": "module",
+          "start_line": 1,
+          "end_line": 8,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module2.py"
+          },
+          "children": [
+            4384438960
+          ],
+          "parent": null,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        }
+      ]
+    },
+    "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module3.py": {
+      "file_path": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module3.py",
+      "hammock_block": {
+        "block_id": 4383543504,
+        "block_full_qualifier": "module3",
+        "project_full_qualifier": "src.sub_folder1.module3",
+        "block_type": "module",
+        "start_line": 1,
+        "end_line": 2,
+        "meta_data": {
+          "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module3.py"
+        },
+        "children": [
+          4384435216
+        ],
+        "parent": null,
+        "call_sites": [],
+        "local_variables": [],
+        "accessed_variables": [],
+        "class_attributes": [],
+        "func_parameters": [],
+        "relations": []
+      },
+      "module_hammock_blocks": [
+        {
+          "block_id": 4384435216,
+          "block_full_qualifier": "module3.add",
+          "project_full_qualifier": "src.sub_folder1.module3.add",
+          "block_type": "function_definition",
+          "start_line": 1,
+          "end_line": 2,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module3.py"
+          },
+          "children": [],
+          "parent": 4383543504,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4383543504,
+          "block_full_qualifier": "module3",
+          "project_full_qualifier": "src.sub_folder1.module3",
+          "block_type": "module",
+          "start_line": 1,
+          "end_line": 2,
+          "meta_data": {
+            "source_file": "/Users/andrewjda/LLMs/codeanalyzer-python/test_examples/simple_repo/src/sub_folder1/module3.py"
+          },
+          "children": [
+            4384435216
+          ],
+          "parent": null,
+          "call_sites": [],
+          "local_variables": [],
+          "accessed_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        }
+      ]
+    }
+  }
+}
