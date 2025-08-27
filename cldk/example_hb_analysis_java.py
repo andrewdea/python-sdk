@@ -121,11 +121,12 @@ def build_generic_application(
 
 
 if __name__ == "__main__":
-    test_applications_dir = Path(
-        "../../codeanalyzer-java/src/test/resources/test-applications/"
-    )
-    project_name = "daytrader8"
-    project_dir = test_applications_dir / project_name
+    # test_applications_dir = Path(
+    #     # "../../codeanalyzer-java/src/test/resources/test-applications/"
+    #     "../../opentelemetry-demo/src/ad/src/main/"
+    # )
+    project_name = "opentelemetry-demo"
+    project_dir = Path("../../opentelemetry-demo/src/ad/src/main/")
     language = "java"
     sym_table = build_symbol_table(project_dir, language)
     gen_app = build_generic_application(symbol_table=sym_table)
