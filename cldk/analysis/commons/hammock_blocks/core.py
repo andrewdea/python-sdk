@@ -14,7 +14,6 @@ def write_output(artifacts: BaseModel, output_dir: Path, filename: str):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     output_file = output_dir / Path(filename)
-    # Use Pydantic's json() with separators for compact output
     json_str = artifacts.model_dump_json(indent=2)
     with output_file.open("w") as f:
         f.write(json_str)
@@ -84,8 +83,7 @@ def build_symbol_table(project_dir: Path, language: str) -> dict[Path, GenericFi
     functions, and variables defined in those files.
     """
     symbol_table: Dict[Path, GenericFile] = {}
-    # Get all Java files first to show accurate progress
-    # TODO obviously this would need to be altered depending on the language
+    # Get all language files first to show accurate progress
     match language.lower():
         case "java":
             files = list_java_files(project_dir)
