@@ -17,7 +17,7 @@ def write_output(artifacts: BaseModel, output_dir: Path, filename: str):
     """Write artifacts to json"""
     output_file = output_dir / Path(filename)
     # Use Pydantic's json() with separators for compact output
-    json_str = artifacts.model_dump_json(indent=None)
+    json_str = artifacts.model_dump_json(indent=4)
     with output_file.open("w") as f:
         f.write(json_str)
     print(f"Analysis saved to {output_file}")
