@@ -7,9 +7,15 @@ import os
 from cldk.analysis.commons.hammock_blocks.hbt_interface import (
     HammockBlockTreeBuilder as hbt,
 )
+import logging
 
 
-def write_output(artifacts: BaseModel, output_dir: Path, filename: str):
+logging.basicConfig()
+logger = logging.getLogger(__package__)
+logger.setLevel(logging.DEBUG)
+
+
+def write_output(artifacts: BaseModel, output_dir: Path, filename: str) -> Path:
     """Write artifacts to json"""
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -17,7 +23,8 @@ def write_output(artifacts: BaseModel, output_dir: Path, filename: str):
     json_str = artifacts.model_dump_json(indent=2)
     with output_file.open("w") as f:
         f.write(json_str)
-    print(f"Analysis saved to {output_file}")
+    logger.debug(f"Analysis saved to {output_file}")
+    return output_file
 
 
 class GenericFile(BaseModel):
@@ -94,13 +101,13 @@ def build_symbol_table(project_dir: Path, language: str) -> dict[Path, GenericFi
 
     # with ProgressBar(len(py_files), "Building symbol table") as progress:
     for file in files:
-        print(f"file : {file}")
+        logger.debug(f"file : {file}")
         try:
             processed_file = build_generic_file(file, project_dir, language)
             if processed_file is not None:
                 symbol_table[file] = processed_file
         except Exception as e:
-            print(f"Failed to process {file}: {e}")
+            logger.debug(f"Failed to process {file}: {e}")
             raise e
     # NOTE not sure I understand what the purpose of this method is
     # it doesn't return anything, and doesn't seem to affect the symbol_table?
@@ -124,10 +131,10 @@ def build_hammock_block_graph(project_dir: Path, language: str) -> GenericApplic
 
 def hb_graph_to_file(
     project_name: str, project_dir: Path, language: str, output_dir: Path
-):
+) -> Path:
     hb_graph = build_hammock_block_graph(project_dir, language)
 
-    write_output(
+    return write_output(
         hb_graph,
         output_dir=output_dir,
         filename=f"{project_name}.json",
