@@ -15,11 +15,10 @@ logger = logging.getLogger(__package__)
 logger.setLevel(logging.DEBUG)
 
 
-def write_output(artifacts: BaseModel, output_dir: Path, filename: str) -> Path:
-    """Write artifacts to json"""
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    output_file = output_dir / Path(filename)
+def write_output_to_file(artifacts: BaseModel, output_file: Path) -> Path:
+    """Write artifacts to json in output_file"""
+    if not os.path.exists(output_file.parent):
+        os.makedirs(output_file.parent)
     json_str = artifacts.model_dump_json(indent=2)
     with output_file.open("w") as f:
         f.write(json_str)
@@ -129,13 +128,10 @@ def build_hammock_block_graph(project_dir: Path, language: str) -> GenericApplic
     return build_generic_application(symbol_table=sym_table)
 
 
-def hb_graph_to_file(
-    project_name: str, project_dir: Path, language: str, output_dir: Path
-) -> Path:
+def hb_graph_to_file(project_dir: Path, language: str, output_file: Path) -> Path:
     hb_graph = build_hammock_block_graph(project_dir, language)
 
-    return write_output(
+    return write_output_to_file(
         hb_graph,
-        output_dir=output_dir,
-        filename=f"{project_name}.json",
+        output_file=output_file,
     )
