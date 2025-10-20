@@ -69,7 +69,7 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Python module (top-level node)"""
+        """Parse Java module (top-level node)"""
         print(f"[JAVA] Dispatched to parse_module for node: {node.type}")
         print(f"[JAVA] Module at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
@@ -92,17 +92,17 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Python import_statement"""
-        print(f"[PYTHON] Dispatched to parse_import_statement for node: {node.type}")
-        print(f"[PYTHON] Import statement at line {node.start_point.row + 1}")
+        """Parse Java import_statement"""
+        print(f"[JAVA] Dispatched to parse_import_statement for node: {node.type}")
+        print(f"[JAVA] Import statement at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
         identifers, variables, strings = (
             self._find_identifiers_locals_strings_in_subtree(node)
         )
         hammock_block.imported_packages.extend(variables)
-        assert (
-            len(identifers) == 0
-        ), "Function and class identifiers should not be present in import statements"
+        assert len(identifers) == 0, (
+            "Function and class identifiers should not be present in import statements"
+        )
         assert len(strings) == 0, "Strings should not be present in import statements"
         return hammock_block, []
 
@@ -110,17 +110,17 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Python import_from_statement"""
-        print(f"[PYTHON] Dispatched to parse_import_statement for node: {node.type}")
-        print(f"[PYTHON] Import from statement at line {node.start_point.row + 1}")
+        """Parse Java import_from_statement"""
+        print(f"[JAVA] Dispatched to parse_import_statement for node: {node.type}")
+        print(f"[JAVA] Import from statement at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
         identifers, variables, strings = (
             self._find_identifiers_locals_strings_in_subtree(node)
         )
         hammock_block.imported_packages.extend(variables)
-        assert (
-            len(identifers) == 0
-        ), "Variables should not be present in import statements"
+        assert len(identifers) == 0, (
+            "Variables should not be present in import statements"
+        )
         assert len(strings) == 0, "Strings should not be present in import statements"
         return hammock_block, []
 
@@ -130,9 +130,9 @@ class JavaTSHBParsingRules:
     ) -> (
         TSHammockBlock
     ):  # Tested! BUT need a better way to associate comments with blocks
-        """Parse Python comment"""
-        print(f"[PYTHON] Dispatched to parse_comment for node: {node.type}")
-        print(f"[PYTHON] Comment at line {node.start_point.row + 1}")
+        """Parse Java comment"""
+        print(f"[JAVA] Dispatched to parse_comment for node: {node.type}")
+        print(f"[JAVA] Comment at line {node.start_point.row + 1}")
         comment = node.text.decode("utf-8")
         current_parent = node.parent
         while current_parent and (current_parent.id not in block_map):
@@ -144,9 +144,9 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:
-        """Parse Python callsite"""
-        print(f"[PYTHON] Dispatched to parse_callsite for node: {node.type}")
-        print(f"[PYTHON] Callsite at line {node.start_point.row + 1}")
+        """Parse Java callsite"""
+        print(f"[JAVA] Dispatched to parse_callsite for node: {node.type}")
+        print(f"[JAVA] Callsite at line {node.start_point.row + 1}")
         function_call_tree = node.child_by_field_name("function")
         full_call = function_call_tree.text.decode("utf-8")
         current_parent = node.parent
@@ -161,9 +161,9 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Python class_definition"""
-        print(f"[PYTHON] Dispatched to parse_class_definition for node: {node.type}")
-        print(f"[PYTHON] Class definition at line {node.start_point.row + 1}")
+        """Parse Java class_definition"""
+        print(f"[JAVA] Dispatched to parse_class_definition for node: {node.type}")
+        print(f"[JAVA] Class definition at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
         name_node = node.child_by_field_name("name")
         if name_node and name_node.type == "identifier":
@@ -173,7 +173,7 @@ class JavaTSHBParsingRules:
             for identifier_node in superclasses_node.named_children:
                 if identifier_node.type == "identifier":
                     print(
-                        f"[PYTHON] Found superclass identifier: {identifier_node.text.decode('utf-8')}"
+                        f"[JAVA] Found superclass identifier: {identifier_node.text.decode('utf-8')}"
                     )
                     hammock_block.local_identifiers.append(
                         identifier_node.text.decode("utf-8")
@@ -207,9 +207,9 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Python function_definition"""
-        print(f"[PYTHON] Dispatched to parse_function_definition for node: {node.type}")
-        print(f"[PYTHON] Function definition at line {node.start_point.row + 1}")
+        """Parse Java function_definition"""
+        print(f"[JAVA] Dispatched to parse_function_definition for node: {node.type}")
+        print(f"[JAVA] Function definition at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
         name_node = node.child_by_field_name("name")
         if name_node and name_node.type == "identifier":
@@ -248,9 +248,9 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Python return_statement"""
-        print(f"[PYTHON] Dispatched to return_statement for node: {node.type}")
-        print(f"[PYTHON] Return statement at line {node.start_point.row + 1}")
+        """Parse Java return_statement"""
+        print(f"[JAVA] Dispatched to return_statement for node: {node.type}")
+        print(f"[JAVA] Return statement at line {node.start_point.row + 1}")
         # Find identifiers, variables, and strings in the expression subtree
         identifiers, variables, strings = (
             self._find_identifiers_locals_strings_in_subtree(node)
@@ -272,11 +272,9 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Python expression_statement"""
-        print(
-            f"[PYTHON] Dispatched to parse_expression_statement for node: {node.type}"
-        )
-        print(f"[PYTHON] Expression statement at line {node.start_point.row + 1}")
+        """Parse Java expression_statement"""
+        print(f"[JAVA] Dispatched to parse_expression_statement for node: {node.type}")
+        print(f"[JAVA] Expression statement at line {node.start_point.row + 1}")
         # Only parse expression statements that are directly related to function definitions, class definitions, or module level
         if node.parent and (
             node.parent.type == "module"
@@ -296,7 +294,7 @@ class JavaTSHBParsingRules:
             return hammock_block, []
         else:
             print(
-                f"[PYTHON] Skipping expression_statement not directly related to function definition: {node.type}"
+                f"[JAVA] Skipping expression_statement not directly related to function definition: {node.type}"
             )
             return None, []
 
@@ -304,16 +302,16 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Python if_statement"""
-        print(f"[PYTHON] Dispatched to parse_if_statement for node: {node.type}")
-        print(f"[PYTHON] If statement at line {node.start_point.row + 1}")
+        """Parse Java if_statement"""
+        print(f"[JAVA] Dispatched to parse_if_statement for node: {node.type}")
+        print(f"[JAVA] If statement at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
         additional_blocks_list = []
 
         # part 1: parse the condition and consequence
         condition_node = node.child_by_field_name("condition")
         consequence_node = node.child_by_field_name("consequence")
-        print(f"[PYTHON] IF clause at line {condition_node.start_point.row + 1}")
+        print(f"[JAVA] IF clause at line {condition_node.start_point.row + 1}")
         if_consequence_child_block = self._base_block_builder(consequence_node)
         if_consequence_child_block.start_point = condition_node.start_point
         if_consequence_child_block.end_point = consequence_node.end_point
@@ -336,9 +334,9 @@ class JavaTSHBParsingRules:
         hammock_block.children.append(if_consequence_child_block)
         hammock_block.children_ids.append(if_consequence_child_block.block_id)
         if_consequence_child_block.parent = hammock_block
-        assert (
-            if_consequence_child_block.block_id not in block_map
-        ), f"Block with id {if_consequence_child_block.block_id} already exists in block_map. This should not happen."
+        assert if_consequence_child_block.block_id not in block_map, (
+            f"Block with id {if_consequence_child_block.block_id} already exists in block_map. This should not happen."
+        )
         block_map[if_consequence_child_block.block_id] = if_consequence_child_block
         additional_blocks_list.append(if_consequence_child_block)
 
@@ -347,7 +345,7 @@ class JavaTSHBParsingRules:
         for alternative_node in alternatives_nodes:
             if alternative_node.type == "elif_clause":
                 print(
-                    f"[PYTHON] Elif clause at line {alternative_node.start_point.row + 1}"
+                    f"[JAVA] Elif clause at line {alternative_node.start_point.row + 1}"
                 )
                 elif_condition_node = alternative_node.child_by_field_name("condition")
                 elif_consequence_node = alternative_node.child_by_field_name(
@@ -378,16 +376,16 @@ class JavaTSHBParsingRules:
                 hammock_block.children.append(elif_consequence_child_block)
                 hammock_block.children_ids.append(elif_consequence_child_block.block_id)
                 elif_consequence_child_block.parent = hammock_block
-                assert (
-                    elif_consequence_child_block.block_id not in block_map
-                ), f"Block with id {elif_consequence_child_block.block_id} already exists in block_map. This should not happen."
+                assert elif_consequence_child_block.block_id not in block_map, (
+                    f"Block with id {elif_consequence_child_block.block_id} already exists in block_map. This should not happen."
+                )
                 block_map[elif_consequence_child_block.block_id] = (
                     elif_consequence_child_block
                 )
                 additional_blocks_list.append(elif_consequence_child_block)
             elif alternative_node.type == "else_clause":
                 print(
-                    f"[PYTHON] Else clause at line {alternative_node.start_point.row + 1}"
+                    f"[JAVA] Else clause at line {alternative_node.start_point.row + 1}"
                 )
                 else_consequence_child_block = self._base_block_builder(
                     alternative_node
@@ -403,9 +401,9 @@ class JavaTSHBParsingRules:
                 hammock_block.children.append(else_consequence_child_block)
                 hammock_block.children_ids.append(else_consequence_child_block.block_id)
                 else_consequence_child_block.parent = hammock_block
-                assert (
-                    else_consequence_child_block.block_id not in block_map
-                ), f"Block with id {else_consequence_child_block.block_id} already exists in block_map. This should not happen."
+                assert else_consequence_child_block.block_id not in block_map, (
+                    f"Block with id {else_consequence_child_block.block_id} already exists in block_map. This should not happen."
+                )
                 block_map[else_consequence_child_block.block_id] = (
                     else_consequence_child_block
                 )
@@ -416,9 +414,9 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Python for_statement"""
-        print(f"[PYTHON] Dispatched to parse_for_statement for node: {node.type}")
-        print(f"[PYTHON] For loop at line {node.start_point.row + 1}")
+        """Parse Java for_statement"""
+        print(f"[JAVA] Dispatched to parse_for_statement for node: {node.type}")
+        print(f"[JAVA] For loop at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
         left_condition_node = node.child_by_field_name("left")
         right_condition_node = node.child_by_field_name("right")
@@ -450,9 +448,9 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Python while_statement"""
-        print(f"[PYTHON] Dispatched to parse_while_statement for node: {node.type}")
-        print(f"[PYTHON] While loop at line {node.start_point.row + 1}")
+        """Parse Java while_statement"""
+        print(f"[JAVA] Dispatched to parse_while_statement for node: {node.type}")
+        print(f"[JAVA] While loop at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
         condition_node = node.child_by_field_name("condition")
         while_body_node = node.child_by_field_name("body")
@@ -476,9 +474,9 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Python try-except statement"""
-        print(f"[PYTHON] Dispatched to parse_try_statement for node: {node.type}")
-        print(f"[PYTHON] Try-except block at line {node.start_point.row + 1}")
+        """Parse Java try-except statement"""
+        print(f"[JAVA] Dispatched to parse_try_statement for node: {node.type}")
+        print(f"[JAVA] Try-except block at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
         additional_blocks_list = []
 
@@ -495,9 +493,9 @@ class JavaTSHBParsingRules:
         try_child_block.string_literals.extend(strings)
 
         hammock_block.children_ids.append(try_child_block.block_id)
-        assert (
-            try_child_block.block_id not in block_map
-        ), f"Block with id {try_child_block.block_id} already exists in block_map. This should not happen."
+        assert try_child_block.block_id not in block_map, (
+            f"Block with id {try_child_block.block_id} already exists in block_map. This should not happen."
+        )
         block_map[try_child_block.block_id] = try_child_block
         hammock_block.children.append(try_child_block)
         try_child_block.parent = hammock_block
@@ -505,7 +503,7 @@ class JavaTSHBParsingRules:
 
         for child in node.named_children:
             if child.type == "except_clause":
-                print(f"[PYTHON] Except clause at line {child.start_point.row + 1}")
+                print(f"[JAVA] Except clause at line {child.start_point.row + 1}")
                 except_node = child
                 except_child_block = self._base_block_builder(except_node)
 
@@ -516,16 +514,16 @@ class JavaTSHBParsingRules:
                 except_child_block.local_variables.extend(variables)
                 except_child_block.string_literals.extend(strings)
 
-                assert (
-                    except_child_block.block_id not in block_map
-                ), f"Block with id {except_child_block.block_id} already exists in block_map. This should not happen."
+                assert except_child_block.block_id not in block_map, (
+                    f"Block with id {except_child_block.block_id} already exists in block_map. This should not happen."
+                )
                 block_map[except_child_block.block_id] = except_child_block
                 hammock_block.children_ids.append(except_child_block.block_id)
                 hammock_block.children.append(except_child_block)
                 except_child_block.parent = hammock_block
                 additional_blocks_list.append(except_child_block)
             elif child.type == "else_clause":
-                print(f"[PYTHON] Else clause at line {child.start_point.row + 1}")
+                print(f"[JAVA] Else clause at line {child.start_point.row + 1}")
                 else_node = child
                 else_child_block = self._base_block_builder(else_node)
 
@@ -536,16 +534,16 @@ class JavaTSHBParsingRules:
                 else_child_block.local_variables.extend(variables)
                 else_child_block.string_literals.extend(strings)
 
-                assert (
-                    else_child_block.block_id not in block_map
-                ), f"Block with id {else_child_block.block_id} already exists in block_map. This should not happen."
+                assert else_child_block.block_id not in block_map, (
+                    f"Block with id {else_child_block.block_id} already exists in block_map. This should not happen."
+                )
                 block_map[else_child_block.block_id] = else_child_block
                 hammock_block.children.append(else_child_block)
                 hammock_block.children_ids.append(else_child_block.block_id)
                 else_child_block.parent = hammock_block
                 additional_blocks_list.append(else_child_block)
             elif child.type == "finally_clause":
-                print(f"[PYTHON] Finally clause at line {child.start_point.row + 1}")
+                print(f"[JAVA] Finally clause at line {child.start_point.row + 1}")
                 finally_node = child
                 finally_child_block = self._base_block_builder(finally_node)
 
@@ -556,9 +554,9 @@ class JavaTSHBParsingRules:
                 finally_child_block.local_variables.extend(variables)
                 finally_child_block.string_literals.extend(strings)
 
-                assert (
-                    finally_child_block.block_id not in block_map
-                ), f"Block with id {finally_child_block.block_id} already exists in block_map. This should not happen."
+                assert finally_child_block.block_id not in block_map, (
+                    f"Block with id {finally_child_block.block_id} already exists in block_map. This should not happen."
+                )
                 block_map[finally_child_block.block_id] = finally_child_block
                 hammock_block.children.append(finally_child_block)
                 hammock_block.children_ids.append(finally_child_block.block_id)
@@ -571,9 +569,9 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Python with statement (context manager)"""
-        print(f"[PYTHON] Dispatched to parse_with_statement for node: {node.type}")
-        print(f"[PYTHON] With statement at line {node.start_point.row + 1}")
+        """Parse Java with statement (context manager)"""
+        print(f"[JAVA] Dispatched to parse_with_statement for node: {node.type}")
+        print(f"[JAVA] With statement at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
         identifiers, variables, strings = (
             self._find_identifiers_locals_strings_in_subtree(node)
@@ -587,9 +585,9 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Python raise statement (context manager)"""
-        print(f"[PYTHON] Dispatched to raise_statement for node: {node.type}")
-        print(f"[PYTHON] Raise statement at line {node.start_point.row + 1}")
+        """Parse Java raise statement (context manager)"""
+        print(f"[JAVA] Dispatched to raise_statement for node: {node.type}")
+        print(f"[JAVA] Raise statement at line {node.start_point.row + 1}")
         # raise NotImplementedError("Raise statement parsing is not implemented yet.")
         return None, []
 
@@ -597,9 +595,9 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[TSHammockBlock, List[TSHammockBlock]]:  # Tested!
-        """Parse Python match_statement (pattern matching)"""
-        print(f"[PYTHON] Dispatched to parse_match_statement for node: {node.type}")
-        print(f"[PYTHON] Match statement at line {node.start_point.row + 1}")
+        """Parse Java match_statement (pattern matching)"""
+        print(f"[JAVA] Dispatched to parse_match_statement for node: {node.type}")
+        print(f"[JAVA] Match statement at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
         additional_blocks_list = []
 
@@ -614,9 +612,9 @@ class JavaTSHBParsingRules:
         body_node = node.child_by_field_name("body")
         alternative_nodes = body_node.children_by_field_name("alternative")
         for alternative_node in alternative_nodes:
-            assert (
-                alternative_node.type == "case_clause"
-            ), "Alternative node should be a case clause"
+            assert alternative_node.type == "case_clause", (
+                "Alternative node should be a case clause"
+            )
             case_child_block = self._base_block_builder(alternative_node)
 
             identifiers, variables, strings = (
@@ -626,9 +624,9 @@ class JavaTSHBParsingRules:
             case_child_block.local_variables.extend(variables)
             case_child_block.string_literals.extend(strings)
 
-            assert (
-                case_child_block.block_id not in block_map
-            ), f"Block with id {case_child_block.block_id} already exists in block_map. This should not happen."
+            assert case_child_block.block_id not in block_map, (
+                f"Block with id {case_child_block.block_id} already exists in block_map. This should not happen."
+            )
             block_map[case_child_block.block_id] = case_child_block
             hammock_block.children_ids.append(case_child_block.block_id)
             hammock_block.children.append(case_child_block)
@@ -712,7 +710,7 @@ class JavaTSHBParsingRules:
                         and child != node
                     ):
                         print(
-                            f"[PYTHON] Skipping nested {child.type} at line {child.start_point.row + 1}"
+                            f"[JAVA] Skipping nested {child.type} at line {child.start_point.row + 1}"
                         )
                         continue
                     stack.append(child)
@@ -764,7 +762,7 @@ class JavaTSHBParsingRules:
     #             edge, block_map, pdg_map
     #         )
     #     print(
-    #         f"[PYTHON] Constructed {len(list_of_caller_callee_edges)} caller-callee relation edges."
+    #         f"[JAVA] Constructed {len(list_of_caller_callee_edges)} caller-callee relation edges."
     #     )
     #     return
 
@@ -890,9 +888,9 @@ class JavaTSHBParsingRules:
         basic_block_bookkeeping = {}
         for hammock_block in pdg["hammock_blocks"]:
             if hammock_block.block_type == "expression_statement":
-                assert (
-                    hammock_block.parent is not None
-                ), f"Hammock block {hammock_block.block_id} of type {hammock_block.block_type} has no parent. This should not happen."
+                assert hammock_block.parent is not None, (
+                    f"Hammock block {hammock_block.block_id} of type {hammock_block.block_type} has no parent. This should not happen."
+                )
                 parent_block_id = hammock_block.parent.block_id
                 if parent_block_id not in basic_block_bookkeeping:
                     basic_block_bookkeeping[parent_block_id] = []
@@ -971,12 +969,12 @@ class JavaTSHBParsingRules:
                     anchor_block.discard_children_ids.extend(
                         next_block.discard_children_ids
                     )
-                    assert (
-                        next_block.children_ids == []
-                    ), f"Next block {next_block_id} has children, which should not happen for expression statements."
-                    assert (
-                        next_block.children_ids == []
-                    ), f"Next block {next_block_id} has children_ids, which should not happen for expression statements."
+                    assert next_block.children_ids == [], (
+                        f"Next block {next_block_id} has children, which should not happen for expression statements."
+                    )
+                    assert next_block.children_ids == [], (
+                        f"Next block {next_block_id} has children_ids, which should not happen for expression statements."
+                    )
                     anchor_block.relations.extend(next_block.relations)
                     anchor_block.imported_packages.extend(next_block.imported_packages)
                     anchor_block.local_callsites.extend(next_block.local_callsites)
