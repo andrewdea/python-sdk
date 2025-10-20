@@ -127,9 +127,9 @@ class JavaTSHBParsingRules:
     @parse_ts_node.register("comment")
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
-    ) -> (
-        TSHammockBlock
-    ):  # Tested! BUT need a better way to associate comments with blocks
+    ) -> Tuple[
+        Optional[TSHammockBlock], List[TSHammockBlock]
+    ]:  # Tested! BUT need a better way to associate comments with blocks
         """Parse Java comment"""
         print(f"[JAVA] Dispatched to parse_comment for node: {node.type}")
         print(f"[JAVA] Comment at line {node.start_point.row + 1}")
