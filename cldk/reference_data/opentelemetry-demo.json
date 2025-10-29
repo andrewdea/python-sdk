@@ -1,0 +1,892 @@
+{
+  "symbol_table": {
+    "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java": {
+      "file_path": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java",
+      "hammock_block": {
+        "block_id": 4427789904,
+        "block_full_qualifier": "AdService",
+        "project_full_qualifier": "java.oteldemo.AdService",
+        "block_type": "program",
+        "start_line": 1,
+        "end_line": 328,
+        "meta_data": {
+          "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+        },
+        "children": [
+          4431702768,
+          4431663856,
+          4431567664,
+          4431697008
+        ],
+        "parent": null,
+        "call_sites": [],
+        "local_variables": [],
+        "class_attributes": [],
+        "func_parameters": [],
+        "relations": []
+      },
+      "module_hammock_blocks": [
+        {
+          "block_id": 4431702672,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 268,
+          "end_line": 270,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [],
+          "parent": 4431702768,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431702768,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 268,
+          "end_line": 270,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [
+            4431702672
+          ],
+          "parent": 4427789904,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431606480,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 190,
+          "end_line": 194,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [],
+          "parent": 4431606576,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431606576,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 190,
+          "end_line": 194,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [
+            4431606480
+          ],
+          "parent": 4431639176,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431654384,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 209,
+          "end_line": 213,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [],
+          "parent": 4431654480,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431654480,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 209,
+          "end_line": 213,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [
+            4431654384
+          ],
+          "parent": 4431639176,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431599760,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "for_statement",
+          "start_line": 178,
+          "end_line": 181,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [],
+          "parent": 4431601392,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431601392,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 176,
+          "end_line": 184,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [
+            4431599760
+          ],
+          "parent": 4431604560,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431604560,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 176,
+          "end_line": 189,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [
+            4431601392
+          ],
+          "parent": 4431639176,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431649776,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 205,
+          "end_line": 207,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [],
+          "parent": 4431649872,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431649872,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 205,
+          "end_line": 207,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [
+            4431649776
+          ],
+          "parent": 4431639176,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431586640,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 162,
+          "end_line": 167,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [],
+          "parent": 4431587696,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431587696,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 162,
+          "end_line": 169,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [
+            4431586640
+          ],
+          "parent": 4431639176,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431639176,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "try_clause",
+          "start_line": 155,
+          "end_line": 218,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [
+            4431606576,
+            4431654480,
+            4431604560,
+            4431649872,
+            4431587696
+          ],
+          "parent": 4431663856,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431663856,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "try_statement",
+          "start_line": 155,
+          "end_line": 224,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [
+            4431639176
+          ],
+          "parent": 4427789904,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431567568,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 117,
+          "end_line": 120,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [],
+          "parent": 4431567664,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431567664,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 117,
+          "end_line": 120,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [
+            4431567568
+          ],
+          "parent": 4427789904,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431697008,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "for_statement",
+          "start_line": 250,
+          "end_line": 252,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [],
+          "parent": 4427789904,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4427789904,
+          "block_full_qualifier": "AdService",
+          "project_full_qualifier": "java.oteldemo.AdService",
+          "block_type": "program",
+          "start_line": 1,
+          "end_line": 328,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/AdService.java"
+          },
+          "children": [
+            4431702768,
+            4431663856,
+            4431567664,
+            4431697008
+          ],
+          "parent": null,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        }
+      ]
+    },
+    "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/GarbageCollectionTrigger.java": {
+      "file_path": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/GarbageCollectionTrigger.java",
+      "hammock_block": {
+        "block_id": 4427789904,
+        "block_full_qualifier": "GarbageCollectionTrigger",
+        "project_full_qualifier": "java.oteldemo.problempattern.GarbageCollectionTrigger",
+        "block_type": "program",
+        "start_line": 1,
+        "end_line": 80,
+        "meta_data": {
+          "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/GarbageCollectionTrigger.java"
+        },
+        "children": [
+          4431499344
+        ],
+        "parent": null,
+        "call_sites": [],
+        "local_variables": [],
+        "class_attributes": [],
+        "func_parameters": [],
+        "relations": []
+      },
+      "module_hammock_blocks": [
+        {
+          "block_id": 4431755568,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "while_statement",
+          "start_line": 51,
+          "end_line": 53,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/GarbageCollectionTrigger.java"
+          },
+          "children": [],
+          "parent": 4431496560,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431496560,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "for_statement",
+          "start_line": 50,
+          "end_line": 57,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/GarbageCollectionTrigger.java"
+          },
+          "children": [
+            4431755568
+          ],
+          "parent": 4431499152,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431499152,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 44,
+          "end_line": 60,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/GarbageCollectionTrigger.java"
+          },
+          "children": [
+            4431496560
+          ],
+          "parent": 4431499344,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431499344,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 44,
+          "end_line": 60,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/GarbageCollectionTrigger.java"
+          },
+          "children": [
+            4431499152
+          ],
+          "parent": 4427789904,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4427789904,
+          "block_full_qualifier": "GarbageCollectionTrigger",
+          "project_full_qualifier": "java.oteldemo.problempattern.GarbageCollectionTrigger",
+          "block_type": "program",
+          "start_line": 1,
+          "end_line": 80,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/GarbageCollectionTrigger.java"
+          },
+          "children": [
+            4431499344
+          ],
+          "parent": null,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        }
+      ]
+    },
+    "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/MemoryUtils.java": {
+      "file_path": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/MemoryUtils.java",
+      "hammock_block": {
+        "block_id": 4427789904,
+        "block_full_qualifier": "MemoryUtils",
+        "project_full_qualifier": "java.oteldemo.problempattern.MemoryUtils",
+        "block_type": "program",
+        "start_line": 1,
+        "end_line": 65,
+        "meta_data": {
+          "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/MemoryUtils.java"
+        },
+        "children": [
+          4431747888,
+          4431751632
+        ],
+        "parent": null,
+        "call_sites": [],
+        "local_variables": [],
+        "class_attributes": [],
+        "func_parameters": [],
+        "relations": []
+      },
+      "module_hammock_blocks": [
+        {
+          "block_id": 4431747216,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 45,
+          "end_line": 47,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/MemoryUtils.java"
+          },
+          "children": [],
+          "parent": 4431747312,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431747312,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 45,
+          "end_line": 47,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/MemoryUtils.java"
+          },
+          "children": [
+            4431747216
+          ],
+          "parent": 4431747792,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431747792,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 44,
+          "end_line": 49,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/MemoryUtils.java"
+          },
+          "children": [
+            4431747312
+          ],
+          "parent": 4431747888,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431747888,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 44,
+          "end_line": 49,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/MemoryUtils.java"
+          },
+          "children": [
+            4431747792
+          ],
+          "parent": 4427789904,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431751536,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 53,
+          "end_line": 55,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/MemoryUtils.java"
+          },
+          "children": [],
+          "parent": 4431751632,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431751632,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 53,
+          "end_line": 55,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/MemoryUtils.java"
+          },
+          "children": [
+            4431751536
+          ],
+          "parent": 4427789904,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4427789904,
+          "block_full_qualifier": "MemoryUtils",
+          "project_full_qualifier": "java.oteldemo.problempattern.MemoryUtils",
+          "block_type": "program",
+          "start_line": 1,
+          "end_line": 65,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/MemoryUtils.java"
+          },
+          "children": [
+            4431747888,
+            4431751632
+          ],
+          "parent": null,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        }
+      ]
+    },
+    "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/CPULoad.java": {
+      "file_path": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/CPULoad.java",
+      "hammock_block": {
+        "block_id": 4427789904,
+        "block_full_qualifier": "CPULoad",
+        "project_full_qualifier": "java.oteldemo.problempattern.CPULoad",
+        "block_type": "program",
+        "start_line": 1,
+        "end_line": 116,
+        "meta_data": {
+          "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/CPULoad.java"
+        },
+        "children": [
+          4431502128,
+          4431496080,
+          4431745776,
+          4431751536
+        ],
+        "parent": null,
+        "call_sites": [],
+        "local_variables": [],
+        "class_attributes": [],
+        "func_parameters": [],
+        "relations": []
+      },
+      "module_hammock_blocks": [
+        {
+          "block_id": 4431502128,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "while_statement",
+          "start_line": 101,
+          "end_line": 103,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/CPULoad.java"
+          },
+          "children": [],
+          "parent": 4427789904,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431496080,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "for_statement",
+          "start_line": 66,
+          "end_line": 72,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/CPULoad.java"
+          },
+          "children": [],
+          "parent": 4427789904,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431745392,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 34,
+          "end_line": 36,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/CPULoad.java"
+          },
+          "children": [],
+          "parent": 4431745776,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431745776,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 34,
+          "end_line": 36,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/CPULoad.java"
+          },
+          "children": [
+            4431745392
+          ],
+          "parent": 4427789904,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431749808,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 49,
+          "end_line": 52,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/CPULoad.java"
+          },
+          "children": [],
+          "parent": 4431749904,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431749904,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 49,
+          "end_line": 52,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/CPULoad.java"
+          },
+          "children": [
+            4431749808
+          ],
+          "parent": 4431750096,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431750096,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_clause",
+          "start_line": 47,
+          "end_line": 53,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/CPULoad.java"
+          },
+          "children": [
+            4431749904
+          ],
+          "parent": 4431751536,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4431751536,
+          "block_full_qualifier": "",
+          "project_full_qualifier": "",
+          "block_type": "if_statement",
+          "start_line": 47,
+          "end_line": 56,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/CPULoad.java"
+          },
+          "children": [
+            4431750096
+          ],
+          "parent": 4427789904,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        },
+        {
+          "block_id": 4427789904,
+          "block_full_qualifier": "CPULoad",
+          "project_full_qualifier": "java.oteldemo.problempattern.CPULoad",
+          "block_type": "program",
+          "start_line": 1,
+          "end_line": 116,
+          "meta_data": {
+            "source_file": "../../opentelemetry-demo/src/ad/src/main/java/oteldemo/problempattern/CPULoad.java"
+          },
+          "children": [
+            4431502128,
+            4431496080,
+            4431745776,
+            4431751536
+          ],
+          "parent": null,
+          "call_sites": [],
+          "local_variables": [],
+          "class_attributes": [],
+          "func_parameters": [],
+          "relations": []
+        }
+      ]
+    }
+  }
+}
