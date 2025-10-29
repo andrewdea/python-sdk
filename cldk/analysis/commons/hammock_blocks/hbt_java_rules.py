@@ -36,7 +36,7 @@ class JavaTSHBParsingRules:
             "try_statement",
             "with_statement",
             "match_statement",
-            "function_definition",
+            "method_definition",
             "class_definition",
         }
         self.exclude_self = exclude_self
@@ -69,9 +69,9 @@ class JavaTSHBParsingRules:
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Java module (top-level node)"""
+        """Parse Java program (top-level node)"""
         print(f"[JAVA] Dispatched to parse_module for node: {node.type}")
-        print(f"[JAVA] Module at line {node.start_point.row + 1}")
+        print(f"[JAVA] Program at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
 
         project_base = self.src_file_to_dir_map["project_base"]
@@ -101,25 +101,7 @@ class JavaTSHBParsingRules:
         )
         hammock_block.imported_packages.extend(variables)
         assert len(identifers) == 0, (
-            "Function and class identifiers should not be present in import statements"
-        )
-        assert len(strings) == 0, "Strings should not be present in import statements"
-        return hammock_block, []
-
-    @parse_ts_node.register("import_from_statement")
-    def parse_ts_node_impl(
-        self, node: Node, block_map: Dict, source_file: str
-    ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Java import_from_statement"""
-        print(f"[JAVA] Dispatched to parse_import_statement for node: {node.type}")
-        print(f"[JAVA] Import from statement at line {node.start_point.row + 1}")
-        hammock_block = self._base_block_builder(node)
-        identifers, variables, strings = (
-            self._find_identifiers_locals_strings_in_subtree(node)
-        )
-        hammock_block.imported_packages.extend(variables)
-        assert len(identifers) == 0, (
-            "Variables should not be present in import statements"
+            "Method and class identifiers should not be present in import statements"
         )
         assert len(strings) == 0, "Strings should not be present in import statements"
         return hammock_block, []
@@ -140,14 +122,14 @@ class JavaTSHBParsingRules:
         block_map[current_parent.id].comments.append(comment)
         return None, []
 
-    @parse_ts_node.register("call")
+    @parse_ts_node.register("method_invocation")
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:
         """Parse Java callsite"""
         print(f"[JAVA] Dispatched to parse_callsite for node: {node.type}")
         print(f"[JAVA] Callsite at line {node.start_point.row + 1}")
-        function_call_tree = node.child_by_field_name("function")
+        function_call_tree = node.child_by_field_name("name")
         full_call = function_call_tree.text.decode("utf-8")
         current_parent = node.parent
         while current_parent and (current_parent.id not in block_map):
@@ -203,13 +185,13 @@ class JavaTSHBParsingRules:
 
         return hammock_block, []
 
-    @parse_ts_node.register("function_definition")
+    @parse_ts_node.register("method_definition")
     def parse_ts_node_impl(
         self, node: Node, block_map: Dict, source_file: str
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:  # Tested!
-        """Parse Java function_definition"""
-        print(f"[JAVA] Dispatched to parse_function_definition for node: {node.type}")
-        print(f"[JAVA] Function definition at line {node.start_point.row + 1}")
+        """Parse Java method_definition"""
+        print(f"[JAVA] Dispatched to parse_method_definition for node: {node.type}")
+        print(f"[JAVA] Method definition at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
         name_node = node.child_by_field_name("name")
         if name_node and name_node.type == "identifier":
@@ -275,12 +257,12 @@ class JavaTSHBParsingRules:
         """Parse Java expression_statement"""
         print(f"[JAVA] Dispatched to parse_expression_statement for node: {node.type}")
         print(f"[JAVA] Expression statement at line {node.start_point.row + 1}")
-        # Only parse expression statements that are directly related to function definitions, class definitions, or module level
+        # Only parse expression statements that are directly related to method definitions, class definitions, or module level
         if node.parent and (
             node.parent.type == "module"
             or node.parent.type == "block"
             and node.parent.parent
-            and node.parent.parent.type in ["function_definition", "class_definition"]
+            and node.parent.parent.type in ["method_definition", "class_definition"]
         ):
             hammock_block = self._base_block_builder(node)
 
@@ -294,7 +276,7 @@ class JavaTSHBParsingRules:
             return hammock_block, []
         else:
             print(
-                f"[JAVA] Skipping expression_statement not directly related to function definition: {node.type}"
+                f"[JAVA] Skipping expression_statement not directly related to method definition: {node.type}"
             )
             return None, []
 
@@ -693,7 +675,7 @@ class JavaTSHBParsingRules:
                         variables.append(current_node.text.decode("utf-8"))
                 continue
             elif current_node.type == "identifier":
-                if self._is_function_or_class_name(current_node):
+                if self._is_method_or_class_name(current_node):
                     identifiers.append(current_node.text.decode("utf-8"))
                 else:
                     variables.append(current_node.text.decode("utf-8"))
@@ -721,13 +703,13 @@ class JavaTSHBParsingRules:
         strings = list(dict.fromkeys(strings))
         return identifiers, variables, strings
 
-    def _is_function_or_class_name(self, node: Node) -> bool:
-        """Check if the identifier is likely a function or class name based on its parent type."""
+    def _is_method_or_class_name(self, node: Node) -> bool:
+        """Check if the identifier is likely a method or class name based on its parent type."""
         parent = node.parent
         grandparent = parent.parent if parent else None
         if not parent:
             return False
-        if parent.type == "function_definition" or parent.type == "class_definition":
+        if parent.type == "method_definition" or parent.type == "class_definition":
             return True
         if parent.type == "call":
             return True
@@ -840,47 +822,47 @@ class JavaTSHBParsingRules:
     #     caller_block.relations.append(caller_relation)
     #     callee_block.relations.append(callee_relation)
 
-    def _locate_hammock_block_from_file_line_and_type(
-        self, pdg, line, kind, is_caller
-    ) -> TSHammockBlock:
-        if kind == "Function":
-            block_type = "function_definition"
-        elif kind == "Class":
-            block_type = "class_definition"
-        elif kind == "Script":
-            block_type = "module"
-        else:
-            raise ValueError(
-                f"Unsupported kind: {kind}. Supported callee kinds are Function, Class."
-            )
+    # def _locate_hammock_block_from_file_line_and_type(
+    #     self, pdg, line, kind, is_caller
+    # ) -> TSHammockBlock:
+    #     if kind == "Function":
+    #         block_type = "function_definition"
+    #     elif kind == "Class":
+    #         block_type = "class_definition"
+    #     elif kind == "Script":
+    #         block_type = "module"
+    #     else:
+    #         raise ValueError(
+    #             f"Unsupported kind: {kind}. Supported callee kinds are Function, Class."
+    #         )
 
-        # Find the smallest enclosing hammock block of the given type at the specified line
-        smallest_enclosing_block = None
-        for hammock_block in pdg["hammock_blocks"]:
-            if hammock_block.start_point.row <= line - 1 <= hammock_block.end_point.row:
-                if hammock_block.block_type != block_type and not is_caller:
-                    continue
-                if smallest_enclosing_block is None:
-                    smallest_enclosing_block = hammock_block
-                if smallest_enclosing_block is not None and (
-                    hammock_block.start_point.row
-                    > smallest_enclosing_block.start_point.row
-                    or hammock_block.end_point.row
-                    < smallest_enclosing_block.end_point.row
-                ):
-                    smallest_enclosing_block = hammock_block
-                elif smallest_enclosing_block is not None and (
-                    hammock_block.start_point.row
-                    == smallest_enclosing_block.start_point.row
-                    and hammock_block.end_point.row
-                    == smallest_enclosing_block.end_point.row
-                    and hammock_block.parent
-                    and hammock_block.parent.block_id
-                    == smallest_enclosing_block.block_id
-                ):
-                    smallest_enclosing_block = hammock_block
-        assert isinstance(smallest_enclosing_block, TSHammockBlock)
-        return smallest_enclosing_block
+    #     # Find the smallest enclosing hammock block of the given type at the specified line
+    #     smallest_enclosing_block = None
+    #     for hammock_block in pdg["hammock_blocks"]:
+    #         if hammock_block.start_point.row <= line - 1 <= hammock_block.end_point.row:
+    #             if hammock_block.block_type != block_type and not is_caller:
+    #                 continue
+    #             if smallest_enclosing_block is None:
+    #                 smallest_enclosing_block = hammock_block
+    #             if smallest_enclosing_block is not None and (
+    #                 hammock_block.start_point.row
+    #                 > smallest_enclosing_block.start_point.row
+    #                 or hammock_block.end_point.row
+    #                 < smallest_enclosing_block.end_point.row
+    #             ):
+    #                 smallest_enclosing_block = hammock_block
+    #             elif smallest_enclosing_block is not None and (
+    #                 hammock_block.start_point.row
+    #                 == smallest_enclosing_block.start_point.row
+    #                 and hammock_block.end_point.row
+    #                 == smallest_enclosing_block.end_point.row
+    #                 and hammock_block.parent
+    #                 and hammock_block.parent.block_id
+    #                 == smallest_enclosing_block.block_id
+    #             ):
+    #                 smallest_enclosing_block = hammock_block
+    #     assert isinstance(smallest_enclosing_block, TSHammockBlock)
+    #     return smallest_enclosing_block
 
     def _post_process_hammock_blocks(self, pdg: dict, block_map):
         # 1. merge consecutive straightline blocks into a single hammock block

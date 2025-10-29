@@ -30,6 +30,9 @@ if __name__ == "__main__":
     # )
     this_dir = Path(os.path.dirname(os.path.realpath(__file__)))
     hb_graph_to_file(project_name, project_dir, language, this_dir / "example_outputs")
+    hb_graph_to_file(
+        project_dir, language, this_dir / "example_outputs" / f"new_{project_name}.json"
+    )
 
 # def write_output(artifacts: BaseModel, output_dir: Path, filename: str):
 #     """Write artifacts to json"""

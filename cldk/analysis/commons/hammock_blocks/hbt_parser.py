@@ -205,9 +205,9 @@ class PyHbtParser:
             if hammock_block is not None:
                 print(f"hammock_block is not None : {hammock_block is not None}")
                 # Add block if not None
-                assert (
-                    block_id not in self.block_map
-                ), f"Block with id {block_id} already exists in block_map. This should not happen."
+                assert block_id not in self.block_map, (
+                    f"Block with id {block_id} already exists in block_map. This should not happen."
+                )
                 self.block_map[block_id] = hammock_block
                 # If the block has a parent we also establish the parent-child relationship
                 current_parent = node.parent
