@@ -30,7 +30,7 @@ class GenericFile(BaseModel):
     """Represents a generic file."""
 
     file_path: str
-    # module_name: str
+    module_name: str
     # imports: List[PyImport] = []
     # comments: List[PyComment] = []
     # classes: Dict[str, PyClass] = {}
@@ -48,9 +48,13 @@ def build_generic_file(
         source, filename=str(file), project_base=str(project_dir), language=language
     )
 
+    assert ts_hbt_map is not None
     # if module_hb is not None:
     return GenericFile(
         file_path=str(file),
+        # TODO `module` is the right word for Python, but it can be confusing in other
+        # languages. is there a generic word that could be applied here?
+        module_name=file.stem,
         hammock_block=module_hb,
         module_hammock_blocks=converted_hbt_map["hammock_blocks"]
         if converted_hbt_map is not None
