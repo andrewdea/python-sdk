@@ -47,6 +47,7 @@ tree-sitter-python = "0.23.6"
 tree-sitter-javascript = "0.23.1"
 clang = "17.0.6"
 libclang = "17.0.6"
+orchard = { git = "https://github.ibm.com/research-orai/orchard.git", rev = "feat/update-tree-sitter" }
 
 [tool.poetry.group.dev.dependencies]
 ipdb = "^0.13.13"
