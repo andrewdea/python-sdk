@@ -61,3 +61,8 @@ dist/
 
 # Lock files
 poetry.lock
+
+# IDE - Emacs
+*~
+\#*\#
+*.dir-locals.el
