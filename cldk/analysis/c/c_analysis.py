@@ -24,7 +24,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import networkx as nx
 
-from cldk.analysis.c.clang import ClangAnalyzer
+from cldk.analysis.c.clang_api import ClangAnalyzer
 from cldk.models.c import CApplication, CFunction, CTranslationUnit, CMacro, CTypedef, CStruct, CEnum, CVariable
 
 
