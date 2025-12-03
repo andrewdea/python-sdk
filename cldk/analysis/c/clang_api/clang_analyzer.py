@@ -124,20 +124,26 @@ class ClangAnalyzer:
         # Initialize our translation unit model
         translation_unit = CTranslationUnit(
             file_path=str(file_path),
+            # NOTE: Tue Nov 25 15:44:47 EST 2025
+            # NOTE that we won't get header files if we filter with "*.c", as done in
+            # the current call to analyze_file form CAnalysis._init_application
             is_header=file_path.suffix in {".h", ".hpp", ".hxx"},
         )
 
         # Process all cursors in the translation unit
-        self._process_translation_unit(tu.cursor, translation_unit)
+        translation_unit = self._process_translation_unit(tu.cursor, translation_unit)
 
         return translation_unit
 
-    def _process_translation_unit(self, cursor, translation_unit: CTranslationUnit):
+    def _process_translation_unit(self, cursor, translation_unit: CTranslationUnit) -> CTranslationUnit:
         """Process all declarations in a translation unit.
 
         Args:
             cursor: Root cursor of the translation unit.
-            translation_unit (CTranslationUnit): Model to populate.
+            translation_unit (CTranslationUnit): Model to
+
+        Returns:
+            CTranslationUnit: the processed translation unit
         """
 
         for child in cursor.get_children():
@@ -152,6 +158,8 @@ class ClangAnalyzer:
             elif child.kind == CursorKind.INCLUSION_DIRECTIVE:
                 include = self._process_inclusion(child)
                 translation_unit.includes.append(include)
+        return translation_unit
+
 
     def _process_inclusion(self, cursor):
         """Process an include directive and capture metadata.

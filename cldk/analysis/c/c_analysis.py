@@ -22,6 +22,7 @@ and to query functions, macros, typedefs, structs/unions, enums, and globals.
 
 from pathlib import Path
 from typing import Dict, List, Optional
+from cldk.models.c.models import CCallGraphEdge, CFunctionDetail
 import networkx as nx
 
 from cldk.analysis.c.clang_api import ClangAnalyzer
@@ -65,8 +66,12 @@ class CAnalysis:
             tu = analyzer.analyze_file(source_file)
             translation_units[str(source_file)] = tu
 
+        self.c_application = CApplication(translation_units=translation_units)
+
+        call_graph_edges = self.get_call_graph_edges()
+
         # Create application model
-        return CApplication(translation_units=translation_units)
+        return CApplication(translation_units=translation_units, call_graph = call_graph_edges)
 
     def get_c_application(self) -> CApplication:
         """Return the C application object.
@@ -177,6 +182,39 @@ class CAnalysis:
             True
         """
         raise NotImplementedError("Support for this functionality has not been implemented yet.")
+
+    def get_call_graph_edges(self) -> List[CCallGraphEdge]:
+        """Return the call graph edges of the C code.
+
+        # TODO specify args and return type
+        """
+        edges = []
+        for file_name, tu in self.c_application.translation_units.items():
+            functions = tu.functions
+
+            for name, func in functions.items():
+                    for call_site in func.call_sites:
+                        source = CFunctionDetail(function_declaration=name,
+                                                 file_path=file_name,
+                                                 function=func)
+                        target_name = call_site.function_name
+                        target_func = functions.get(target_name)
+                        if target_func is None:
+                            continue
+                        target = CFunctionDetail(function_declaration=target_name,
+                                                 file_path=file_name,
+                                                 function=target_func)
+                        edge_type = "placeholder"
+                        weight = "placeholder"
+                        is_indirect = False
+                        edge = CCallGraphEdge(source=source, target=target,
+                                              type=edge_type, weight=weight,
+                                              is_indirect=is_indirect)
+
+                        edges.append(edge)
+
+        return edges
+
 
     def get_call_graph_json(self) -> str:
         """Return the call graph serialized as JSON.

@@ -296,6 +296,7 @@ class CCallGraphEdge(BaseModel):
 
     source: CFunctionDetail
     target: CFunctionDetail
+    # TODO what exactly are the expected types and weights here??
     type: str
     weight: str
     is_indirect: bool = False
