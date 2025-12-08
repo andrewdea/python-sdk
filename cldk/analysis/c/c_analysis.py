@@ -186,7 +186,10 @@ class CAnalysis:
     def get_call_graph_edges(self) -> List[CCallGraphEdge]:
         """Return the call graph edges of the C code.
 
-        # TODO specify args and return type
+        Returns:
+            List[CCallGraphEdge]: Edges in the call graph,
+            connecting sources (functions calling other functions) to targets
+            (functions being called)
         """
         edges = []
         for file_name, tu in self.c_application.translation_units.items():

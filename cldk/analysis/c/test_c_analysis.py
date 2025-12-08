@@ -7,4 +7,4 @@ print(f"From: test_c_analysis.py; line number: 7; INITIALIZED")
 
 app = c_a.c_application
 
-print(f"app.call_graph : {app.call_graph}")
+print(f"app : {app.model_dump_json(indent=2)}")
