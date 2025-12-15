@@ -26,6 +26,14 @@ class ClangAnalyzer:
     This analyzer creates a Clang index, optionally uses a compilation
     database for compile flags, and walks the AST to build CLDK models.
     """
+    # TODO figure out the most appropriate place to put these constants
+    c_extensions = {".c"}
+    c_header_extensions = {".h"}
+    cpp_extensions = {".cpp", ".cxx", ".cc", ".c++"}
+    cpp_header_extensions = {".h", ".hpp", ".hxx"}
+    all_cpp_extensions = c_extensions | c_header_extensions | cpp_extensions | cpp_header_extensions
+
+
 
     def __init__(self, compilation_database_path: Optional[Path] = None):
         """Initialize the analyzer and libclang configuration.
@@ -124,12 +132,8 @@ class ClangAnalyzer:
         # Initialize our translation unit model
         translation_unit = CTranslationUnit(
             file_path=str(file_path),
-            # NOTE: Tue Nov 25 15:44:47 EST 2025
-            # NOTE that we won't get header files if we filter with "*.c", as done in
-            # the current call to analyze_file form CAnalysis._init_application
-            is_header=file_path.suffix in {".h", ".hpp", ".hxx"},
+            is_header=file_path.suffix in self.cpp_header_extensions,
         )
-
         # Process all cursors in the translation unit
         translation_unit = self._process_translation_unit(tu.cursor, translation_unit)
 

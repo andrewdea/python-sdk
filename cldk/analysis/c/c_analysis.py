@@ -62,7 +62,11 @@ class CAnalysis:
 
         # Analyze each file
         translation_units = {}
-        for source_file in project_dir.rglob("*.c"):
+        all_files = []
+        for pattern in ClangAnalyzer.all_cpp_extensions:
+            all_files += [file for file in project_dir.rglob(f"*{pattern}")]
+
+        for source_file in all_files:
             tu = analyzer.analyze_file(source_file)
             translation_units[str(source_file)] = tu
 
