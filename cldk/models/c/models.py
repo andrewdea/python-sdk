@@ -1,5 +1,5 @@
-from typing import Dict, List, Optional, Union
-from pydantic import BaseModel, field_validator
+from typing import Dict, List, Optional
+from pydantic import BaseModel
 from enum import Enum
 
 
@@ -239,8 +239,34 @@ class CInclude(BaseModel):
     full_text: str
 
 
+class CppClass(BaseModel):
+    """Represents detailed information about a class.
+
+    Attributes:
+        name (str): The name of the class
+        members (List[CVariable]): Member variables
+        methods (List[CFunction]): Method declarations/definitions
+        parents (List[str]): Parent class names
+        inner_classes (List[CppClass]): Inner classes details
+        constructors (List[CFunction]): Class constructors details
+        destructor (Optional[CFunction]): Class destructor details
+        start_line (int): Starting line in source
+        end_line (int): Ending line in source
+    """
+
+    name: str
+    members: List[CVariable] = []
+    methods: List[CFunction] = {}
+    parents: List[str] = []
+    inner_classes: List["CppClass"] = []
+    constructors: List[CFunction] = []
+    destructor: Optional[CFunction] = None
+    start_line: int
+    end_line: int
+
+
 class CTranslationUnit(BaseModel):
-    """Represents a C source file.
+    """Represents a C/C++ source file.
 
     Attributes:
         file_path (str): Path to the source file
@@ -252,6 +278,7 @@ class CTranslationUnit(BaseModel):
         globals (List[CVariable]): Global variable declarations
         functions (Dict[str, CFunction]): Function declarations/definitions
         is_header (bool): Whether this is a header file
+        classes (List[CppClass]): Class declarations
     """
 
     file_path: str
@@ -262,6 +289,7 @@ class CTranslationUnit(BaseModel):
     enums: List[CEnum] = []
     globals: List[CVariable] = []
     functions: Dict[str, CFunction] = {}
+    classes: List[CppClass] = []
     is_header: bool = False
     is_modified: bool = False
 

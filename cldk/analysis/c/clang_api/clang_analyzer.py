@@ -12,7 +12,7 @@ from typing import List, Optional
 from cldk.models.c import CFunction, CCallSite, CTranslationUnit
 import logging
 
-from cldk.models.c.models import CInclude, CParameter, CVariable, StorageClass
+from cldk.models.c.models import CInclude, CParameter, CppClass, CVariable, StorageClass
 
 from clang.cindex import Config
 from clang.cindex import Index, TranslationUnit, CursorKind, TypeKind, CompilationDatabase
@@ -122,17 +122,20 @@ class ClangAnalyzer:
 
         # Get compilation arguments if available
         compile_args = self._get_compile_args(file_path)
+        is_header = file_path.suffix in self.cpp_header_extensions
         # Parse the file with Clang
         tu = self.index.parse(
             str(file_path),
             args=compile_args,
-            options=TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD,
+            options=TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD
+            if not is_header
+            else TranslationUnit.PARSE_INCOMPLETE,
         )
 
         # Initialize our translation unit model
         translation_unit = CTranslationUnit(
             file_path=str(file_path),
-            is_header=file_path.suffix in self.cpp_header_extensions,
+            is_header=is_header,
         )
         # Process all cursors in the translation unit
         translation_unit = self._process_translation_unit(tu.cursor, translation_unit)
@@ -162,8 +165,11 @@ class ClangAnalyzer:
             elif child.kind == CursorKind.INCLUSION_DIRECTIVE:
                 include = self._process_inclusion(child)
                 translation_unit.includes.append(include)
-        return translation_unit
 
+            elif child.kind == CursorKind.CLASS_DECL:
+                clazz = self._process_class(child)
+                translation_unit.classes.append(clazz)
+        return translation_unit
 
     def _process_inclusion(self, cursor):
         """Process an include directive and capture metadata.
@@ -267,9 +273,9 @@ class ClangAnalyzer:
                     brace += 1
                 elif token.spelling == "}":
                     brace -= 1
-                    if brace == 0:
-                        break
                 body.append(token.spelling)
+                if brace == 0:
+                    break
 
             body_str = " ".join(body)
 
@@ -377,3 +383,67 @@ class ClangAnalyzer:
             cmd = commands[0]
             return [arg for arg in cmd.arguments[1:] if arg != str(file_path)]
         return ["-x", "c++", "-std=c++17"]
+
+    def _process_class(self, cursor) -> CppClass:
+        """Extract detailed class information from a cursor.
+
+        Args:
+            cursor: Cursor for a class declaration/definition.
+
+        Returns:
+            CppClass: Class model including fields, methods, constructors and inner classes.
+        """
+
+        parent_classes = self._get_base_classes(cursor)
+
+        fields = []
+        methods = []
+        inner_classes = []
+        constructors = []
+        destructor = None
+        for c in cursor.get_children():
+            if c.kind == CursorKind.FIELD_DECL:
+                fields.append(self._extract_variable(c))
+
+            elif c.kind == CursorKind.CXX_METHOD:
+                methods.append(self._extract_function(c))
+
+            elif c.kind == CursorKind.CLASS_DECL:
+                # might want to do it for structs too
+                inner_classes.append(self._process_class(c))
+
+            elif c.kind == CursorKind.CONSTRUCTOR:
+                constructors.append(self._extract_function(c))
+
+            elif c.kind == CursorKind.DESTRUCTOR:
+                destructor = self._extract_function(c)
+
+        return CppClass(
+            name=cursor.spelling,
+            members=fields,
+            methods=methods,
+            parents=parent_classes,
+            inner_classes=inner_classes,
+            constructors=constructors,
+            destructor=destructor,
+            start_line=cursor.extent.start.line,
+            end_line=cursor.extent.end.line,
+        )
+
+    def _get_base_classes(self, cursor) -> List[str]:
+        """Extract the parent classes for the current class cursor.
+
+        Args:
+            cursor: Cursor for a class declaration/definition.
+
+        Returns:
+            List[str]: parent class names.
+        """
+        bases = []
+        for c in cursor.get_children():
+            if c.kind == CursorKind.CXX_BASE_SPECIFIER:
+                base = c.get_definition() or c.referenced
+                if base:
+                    bases.append(base.spelling)
+
+        return bases
