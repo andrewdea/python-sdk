@@ -29,7 +29,7 @@ class ClangAnalyzer:
     # TODO figure out the most appropriate place to put these constants
     c_extensions = {".c"}
     c_header_extensions = {".h"}
-    cpp_extensions = {".cpp", ".cxx", ".cc", ".c++"}
+    cpp_extensions = {".cpp", ".cxx", ".cc", ".c++", ".C"}
     cpp_header_extensions = {".h", ".hpp", ".hxx"}
     all_cpp_extensions = c_extensions | c_header_extensions | cpp_extensions | cpp_header_extensions
 
