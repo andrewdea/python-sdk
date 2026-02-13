@@ -342,6 +342,10 @@ class CAnalysis:
         """
         return self.c_application.translation_units.get(file_path)
 
+    # method alias
+    # TODO standardize this
+    get_c_compilation_unit = get_C_compilation_unit
+
     def get_functions_in_file(self, file_name: str) -> List[CFunction]:
         """Return all functions in a given file.
 
