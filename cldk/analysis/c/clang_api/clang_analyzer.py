@@ -18,7 +18,7 @@ from clang.cindex import Config
 from clang.cindex import Index, TranslationUnit, CursorKind, TypeKind, CompilationDatabase
 
 logger = logging.getLogger(__name__)
-
+logger.setLevel(logging.DEBUG)
 
 class ClangAnalyzer:
     """Analyze C/C++ code using Clang's Python bindings.
