@@ -17,6 +17,8 @@ from cldk.models.c.models import CInclude, CParameter, CppClass, CVariable, Stor
 from clang.cindex import Config
 from clang.cindex import Index, TranslationUnit, CursorKind, TypeKind, CompilationDatabase
 
+from dotenv import load_dotenv
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -42,26 +44,7 @@ class ClangAnalyzer:
             compilation_database_path (Path | None): Optional path to a
                 compilation database (compile_commands.json directory).
         """
-        # # Let's turn off Address sanitization for parsing code
-        # # Initialize libclang at module level
-        # try:
-        if platform.system() == "Darwin":
-            possible_paths = [
-                "/opt/homebrew/opt/llvm/lib/libclang.dylib",  # Apple Silicon
-                "/usr/local/opt/llvm/lib/libclang.dylib",  # Intel Mac
-                "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/libclang.dylib",
-            ]
-
-            # We could not find libclang. Raise an error and provide instructions.
-            if len(possible_paths) == 0:
-                raise RuntimeError("Install LLVM 18 using: brew install llvm@18")
-
-            # Check each possible path and return the first one that exists
-            for path in possible_paths:
-                if os.path.exists(path):
-                    logger.info(f"Found libclang at: {path}")
-                    # Configure Clang before creating the Index
-                    Config.set_library_file(path)
+        Config.set_library_file(self.__find_libclang())
 
         self.index = Index.create()
         self.compilation_database = None
@@ -83,14 +66,27 @@ class ClangAnalyzer:
 
         system = platform.system()
 
-        # On macOS, we check both Apple Silicon and Intel paths
+        load_dotenv()
+        llvm_path = os.getenv("LLVM_PATH")
+        if llvm_path is not None:
+            if os.path.exists(llvm_path):
+                logger.info(f"Found libclang at: {llvm_path}")
+                return llvm_path
+            else:
+                logger.warn(f"Environment variable LLVM_PATH is set to non-existent path: {llvm_path}")
+
         if system == "Darwin":
             possible_paths = [
-                "/opt/homebrew/opt/llvm/lib/libclang.dylib",  # Apple Silicon
-                "/usr/local/opt/llvm/lib/libclang.dylib",  # Intel Mac
+                # Apple Silicon, specific version:
+                "/opt/homebrew/opt/llvm@18/lib/libclang.dylib",
+                # Apple Silicon, generic:
+                "/opt/homebrew/opt/llvm/lib/libclang.dylib",
+                # Intel Mac:
+                "/usr/local/opt/llvm/lib/libclang.dylib",
                 "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/libclang.dylib",
             ]
-            install_instructions = "Install LLVM using: brew install llvm"
+
+            install_instructions = "Install LLVM using: brew install llvm@18"
 
         # On Linux, we check various common installation paths
         elif system == "Linux":
@@ -106,6 +102,8 @@ class ClangAnalyzer:
             if os.path.exists(path):
                 logger.info(f"Found libclang at: {path}")
                 return path
+        # TODO ideally find a way to ensure that the found library is of the right
+        # version (llvm *18*!)
 
         # If no library is found, provide clear installation instructions
         raise RuntimeError(f"Could not find libclang library. \n" f"Please ensure LLVM is installed:\n{install_instructions}")

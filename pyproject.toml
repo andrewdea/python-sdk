@@ -49,6 +49,7 @@ clang = "17.0.6"
 libclang = "17.0.6"
 # NOTE orchard versions >= 0.0.17 should have c and cpp support
 orchard = { git = "ssh://git@github.ibm.com/research-orai/orchard"}
+dotenv = "0.9.9"
 
 [tool.poetry.group.dev.dependencies]
 ipdb = "^0.13.13"
