@@ -155,7 +155,8 @@ class CAnalysis:
             Traceback (most recent call last):
             NotImplementedError: Support for this functionality has not been implemented yet.
         """
-        raise NotImplementedError("Support for this functionality has not been implemented yet.")
+        # raise NotImplementedError("Support for this functionality has not been implemented yet.")
+        return [tu for _, tu in self.c_application.translation_units.items()]
 
     def is_parsable(self, source_code: str) -> bool:
         """Check if the source code is parsable using Clang.
