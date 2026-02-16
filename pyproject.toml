@@ -47,6 +47,9 @@ tree-sitter-python = "0.23.6"
 tree-sitter-javascript = "0.23.1"
 clang = "17.0.6"
 libclang = "17.0.6"
+# orchard: use main branch as of February 16, 2026, 04:48PM (EST)
+# TODO specify the version
+orchard = { git = "ssh://git@github.ibm.com/research-orai/orchard"}
 
 [tool.poetry.group.dev.dependencies]
 ipdb = "^0.13.13"
