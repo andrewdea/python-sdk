@@ -265,6 +265,7 @@ class CppClass(BaseModel):
     end_line: int
 
 
+# TODO improve the nomenclature: a "TranslationUnit" is a source file
 class CTranslationUnit(BaseModel):
     """Represents a C/C++ source file.
 
