@@ -1,7 +1,8 @@
 from orchard.data_types import SupportedLanguages
 from orchard.helpers.perched import parser_registry
 from tree_sitter import Parser, Tree, Language, Query, Node
-from typing import Optional
+from typing import Optional, Union
+from pathlib import Path
 from cldk.analysis.commons.treesitter.models import Captures
 
 
@@ -24,6 +25,11 @@ class TreeSitterBase:
 
     def parse(self, code: str) -> Tree:
         return self.parser.parse(bytes(code, "utf-8"))
+
+    def parse_file(self, file_path: Union[str, Path]) -> Tree:
+        with open(file_path, "r") as f:
+            content = f.read()
+        return self.parse(content)
 
     def get_raw_ast(self, code: str) -> Tree:
         return self.parse(code)
