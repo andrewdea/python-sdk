@@ -71,7 +71,3 @@ class TreeSitterBase:
             return node
         else:
             return self.safe_ascend(node.parent, ascend_count - 1)
-
-    def remove_all_comments(self, source_code: str) -> str:
-        # TODO leverage OrchardLanguage.comment_syntax
-        raise NotImplementedError()
