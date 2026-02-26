@@ -173,7 +173,7 @@ class ClangAnalyzer:
                 translation_unit.includes.append(include)
 
             elif child.kind == CursorKind.CLASS_DECL:
-                clazz = self._process_class(child)
+                clazz = self._process_class(child, translation_unit.file_path)
                 translation_unit.classes.append(clazz)
         return translation_unit
 
@@ -390,7 +390,7 @@ class ClangAnalyzer:
             return [arg for arg in cmd.arguments[1:] if arg != str(file_path)]
         return ["-x", "c++", "-std=c++17"]
 
-    def _process_class(self, cursor) -> CppClass:
+    def _process_class(self, cursor, file_path: str) -> CppClass:
         """Extract detailed class information from a cursor.
 
         Args:
@@ -416,7 +416,7 @@ class ClangAnalyzer:
 
             elif c.kind == CursorKind.CLASS_DECL:
                 # might want to do it for structs too
-                inner_classes.append(self._process_class(c))
+                inner_classes.append(self._process_class(c, file_path))
 
             elif c.kind == CursorKind.CONSTRUCTOR:
                 constructors.append(self._extract_function(c))
@@ -426,6 +426,7 @@ class ClangAnalyzer:
 
         return CppClass(
             name=cursor.spelling,
+            file_path=file_path,
             members=fields,
             methods=methods,
             parents=parent_classes,

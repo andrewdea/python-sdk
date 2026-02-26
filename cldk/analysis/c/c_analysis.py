@@ -31,7 +31,7 @@ from cldk.models.c import CApplication, CFunction, CTranslationUnit, CMacro, CTy
 
 class CAnalysis:
 
-    def __init__(self, project_dir: Path) -> None:
+    def __init__(self, project_dir: Path):
         """Initialize the C analysis backend.
 
         Args:

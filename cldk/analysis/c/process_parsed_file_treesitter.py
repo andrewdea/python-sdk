@@ -53,7 +53,7 @@ def process_parsed_file(tree: Tree, translation_unit: CTranslationUnit) -> CTran
             translation_unit.includes.append(include)
 
     for node in get_nodes_of_multiple_types(tree, ("class_specifier", "struct_specifier")):
-        node_class = process_class_from_node(node)
+        node_class = process_class_from_node(node, file_path=translation_unit.file_path)
         if node_class:
             translation_unit.classes.append(node_class)
     
@@ -424,7 +424,7 @@ def extract_variable_from_node(node: Node) -> Optional[CVariable]:
     )
 
 
-def process_class_from_node(node: Node) -> Optional[CppClass]:
+def process_class_from_node(node: Node, file_path: str) -> Optional[CppClass]:
     """Extract class information from a class_specifier node.
     
     Args:
@@ -458,6 +458,7 @@ def process_class_from_node(node: Node) -> Optional[CppClass]:
     
     return CppClass(
         name=class_name,
+        file_path=file_path,
         members=members,
         methods=methods,
         parents=[],  # Would need additional parsing for inheritance
