@@ -9,7 +9,9 @@ import os
 import platform
 from pathlib import Path
 from typing import List, Optional
+from cldk.analysis.c.process_parsed_file_treesitter import process_parsed_file
 from cldk.models.c import CFunction, CCallSite, CTranslationUnit
+from cldk.analysis.commons.treesitter.treesitter_cpp import TreeSitterCpp
 import logging
 
 from cldk.models.c.models import CInclude, CParameter, CppClass, CVariable, StorageClass
@@ -121,22 +123,28 @@ class ClangAnalyzer:
         # Get compilation arguments if available
         compile_args = self._get_compile_args(file_path)
         is_header = file_path.suffix in self.cpp_header_extensions
-        # Parse the file with Clang
-        tu = self.index.parse(
-            str(file_path),
-            args=compile_args,
-            options=TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD
-            if not is_header
-            else TranslationUnit.PARSE_INCOMPLETE,
-        )
 
         # Initialize our translation unit model
         translation_unit = CTranslationUnit(
             file_path=str(file_path),
             is_header=is_header,
         )
-        # Process all cursors in the translation unit
-        translation_unit = self._process_translation_unit(tu.cursor, translation_unit)
+        # Parse the file with Clang, or, if that fails, tree-sitter
+        try:
+            tu = self.index.parse(
+            str(file_path),
+            args=compile_args,
+            options=TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD
+            if not is_header
+            else TranslationUnit.PARSE_INCOMPLETE,
+            )
+            # Process all cursors in the translation unit
+            translation_unit = self._process_translation_unit(tu.cursor, translation_unit)
+        except Exception as e:
+            logger.warn(e)
+            parsed_file = TreeSitterCpp().parse_file(file_path)
+            translation_unit = process_parsed_file(parsed_file, translation_unit)
+
 
         return translation_unit
 

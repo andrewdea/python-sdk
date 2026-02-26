@@ -24,7 +24,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 from cldk.models.c.models import CCallGraphEdge, CFunctionDetail
 import networkx as nx
-
+import os
 from cldk.analysis.c.clang_api import ClangAnalyzer
 from cldk.models.c import CApplication, CFunction, CTranslationUnit, CMacro, CTypedef, CStruct, CEnum, CVariable
 
@@ -63,7 +63,8 @@ class CAnalysis:
         # Analyze each file
         translation_units = {}
         for source_file in project_dir.rglob("*"):
-            if source_file.suffix in ClangAnalyzer.all_cpp_extensions:
+            if (source_file.suffix in ClangAnalyzer.all_cpp_extensions
+                and os.path.isfile(source_file)):
                 tu = analyzer.analyze_file(source_file)
                 translation_units[str(source_file)] = tu
 
