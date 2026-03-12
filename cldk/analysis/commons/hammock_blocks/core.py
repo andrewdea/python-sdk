@@ -1,6 +1,7 @@
 from pathlib import Path
 from cldk.analysis.commons.hammock_blocks.hb_definition import TSHammockBlock
 from cldk.models.java.models import JHammockBlock
+from cldk.models.python.models import PyHammockBlock
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Union
 import os
@@ -30,14 +31,14 @@ class GenericFile(BaseModel):
     """Represents a generic file."""
 
     file_path: str
-    module_name: str
+    module_name: str = ""
     # imports: List[PyImport] = []
     # comments: List[PyComment] = []
     # classes: Dict[str, PyClass] = {}
     # functions: Dict[str, PyCallable] = {}
     # variables: List[PyVariableDeclaration] = []
-    hammock_block: Optional[JHammockBlock] = None
-    module_hammock_blocks: List[Union[JHammockBlock, TSHammockBlock]] = []
+    hammock_block: Optional[Union[JHammockBlock, PyHammockBlock]] = None
+    module_hammock_blocks: List[Union[JHammockBlock, PyHammockBlock, TSHammockBlock]] = []
 
 
 def build_generic_file(
@@ -50,6 +51,7 @@ def build_generic_file(
 
     assert ts_hbt_map is not None
     # if module_hb is not None:
+    # Derive module_name from file stem (e.g. "recommendation_server" from "recommendation_server.py")
     return GenericFile(
         file_path=str(file),
         # TODO `module` is the right word for Python, but it can be confusing in other
