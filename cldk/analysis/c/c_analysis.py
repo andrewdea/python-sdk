@@ -27,7 +27,8 @@ import networkx as nx
 import os
 from cldk.analysis.c.clang_api import ClangAnalyzer
 from cldk.models.c import CApplication, CFunction, CTranslationUnit, CMacro, CTypedef, CStruct, CEnum, CVariable
-
+import clang_callgraph
+import json
 
 class CAnalysis:
 
@@ -58,20 +59,38 @@ class CAnalysis:
             >>> isinstance(ca.get_c_application(), CApplication)  # doctest: +SKIP
             True
         """
+        # proof of concept: use clang-callgraph to analyze the application:
+        callgraph_analyzer = clang_callgraph.CallGraphAnalyzer()
+        call_graph_edges = callgraph_analyzer
+
+
         analyzer = ClangAnalyzer()
 
         # Analyze each file
         translation_units = {}
+        files_to_analyze = []
         for source_file in project_dir.rglob("*"):
             if (source_file.suffix in ClangAnalyzer.all_cpp_extensions
                 and os.path.isfile(source_file)):
                 tu = analyzer.analyze_file(source_file)
                 translation_units[str(source_file)] = tu
+                files_to_analyze.append(source_file)
 
         self.c_application = CApplication(translation_units=translation_units)
 
         call_graph_edges = self.get_call_graph_edges()
 
+        result = callgraph_analyzer.analyze(
+            source_files=["../test/test_project/main.cpp"],
+            extra_args=[
+                "-std=c++17",
+                "-resource-dir", "/opt/homebrew/Cellar/llvm@18/18.1.8/lib/clang/18",
+                "-isysroot", "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+                "-I../test/test_project",
+                "-I/opt/homebrew/opt/llvm@18/include"
+            ]
+        )
+        print(f"result : {json.dumps(result, indent=4)}")
         # Create application model
         return CApplication(translation_units=translation_units, call_graph = call_graph_edges)
 
