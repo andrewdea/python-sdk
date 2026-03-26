@@ -26,7 +26,7 @@ import logging
 from typing import List
 
 from cldk.analysis import AnalysisLevel
-from cldk.analysis.c import CAnalysis
+from cldk.analysis.c import CAnalysis, CppAnalysis
 from cldk.analysis.java import JavaAnalysis
 from cldk.analysis.commons.treesitter import TreesitterJava
 from cldk.analysis.python.python_analysis import PythonAnalysis
@@ -61,7 +61,9 @@ class CLDK:
         target_files: List[str] | None = None,
         analysis_backend_path: str | None = None,
         analysis_json_path: str | Path = None,
-    ) -> JavaAnalysis | PythonAnalysis | CAnalysis:
+        compilation_db_path: str | Path = None,
+        extra_compiler_args: List[str] = [],
+    ) -> JavaAnalysis | PythonAnalysis | CAnalysis | CppAnalysis:
         """Initialize a language-specific analysis façade.
 
         Args:
@@ -72,6 +74,8 @@ class CLDK:
             target_files (list[str] | None): Files to constrain analysis (optional).
             analysis_backend_path (str | None): Path to the analysis backend.
             analysis_json_path (str | Path | None): Path to persist analysis database.
+            compilation_db_path (str | Path | None): Path to the C++ compilation DB. Needed for relevant call graphs in C++ projects.
+            extra_compiler_args (list[str]): Additional arguments that need to be passed to the compiler (optional).
 
         Returns:
             JavaAnalysis | PythonAnalysis | CAnalysis: Initialized analysis façade for the chosen language.
@@ -114,6 +118,12 @@ class CLDK:
             )
         elif self.language == "c":
             return CAnalysis(project_dir=project_path)
+        elif self.language.lower() in ["cpp", "c++"]:
+            return CppAnalysis(
+                project_dir=project_path,
+                compilation_db_path=compilation_db_path,
+                extra_compiler_args=extra_compiler_args,
+            )
         else:
             raise NotImplementedError(f"Analysis support for {self.language} is not implemented yet.")
 

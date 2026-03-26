@@ -19,3 +19,4 @@ C/C++ package
 """
 
 from cldk.models.c.models import *
+from cldk.models.c.cpp_models import *
