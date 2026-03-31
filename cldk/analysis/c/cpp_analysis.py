@@ -26,6 +26,7 @@ from cldk.models.c import (
     CppRecordKind,
     VariableFilter,
 )
+import sys
 
 
 # the backend uses: symbols | callgraph
@@ -35,6 +36,46 @@ _ANALYSIS_MAP = {
     AnalysisLevel.program_dependency_graph: "callgraph",  # not supported, default to callgraph
     AnalysisLevel.system_dependency_graph: "callgraph",  # not supported, default to callgraph
 }
+
+# TEMP right now we're using this function here
+# eventually we'll want to integrate upstream directly into CallGraphAnalyzer.analyze
+def safe_analyze(
+    analyzer: clang_callgraph.CallGraphAnalyzer,
+    source_files: list[str],
+    compilation_db_path: str,
+    project_root: str,
+    mode: str,
+    file_filters: list[str] = [],
+    extra_args: list[str] = [],
+):
+    all_args = {
+        "source_files": source_files,
+        "compilation_db_path": compilation_db_path,
+        "file_filters": file_filters,
+        "extra_args": extra_args,
+        "project_root": project_root,
+        "mode": mode,
+    }
+
+    # TEMP: on macOS, we need extra args, and we seemingly cannot set the
+    # compilation_db_path arg
+    # TODO investigate the root cause of this and fix it
+    if sys.platform == "darwin":
+        all_args["extra_args"] = extra_args + [
+            # "-std=c++17",
+            "-resource-dir",
+            "/opt/homebrew/Cellar/llvm@18/18.1.8/lib/clang/18",
+            "-isysroot",
+            "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+            # "-I../test/test_project", # TODO make sure this one is set programmatically
+            "-I/opt/homebrew/opt/llvm@18/include",
+        ]
+        # all_args.pop("file_filters")
+        all_args.pop("compilation_db_path")
+
+
+    result = analyzer.analyze(**all_args)
+    return result
 
 
 class CppAnalysis:
@@ -103,7 +144,8 @@ class CppAnalysis:
             compilation_db = str(build_dir) if build_dir.exists() else ""
 
         # Run analysis
-        self.analyzer.analyze(
+        safe_analyze(
+            self.analyzer,
             source_files=source_files,
             extra_args=extra_compiler_args or [],
             compilation_db_path=compilation_db,
