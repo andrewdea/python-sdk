@@ -122,10 +122,14 @@ class CppAnalysis:
         Returns:
             CppApplication: Pydantic application model.
         """
+        # NOTE it's important that when they're passed to `analyze`, all Path variables
+        # are resolved (ie they show the full absolute path rather than relative)
+        project_dir_str = str(self.project_dir.resolve())
+
         # Find all C++ source files
         source_files = []
         for ext in ["*.cpp", "*.cc", "*.cxx", "*.c"]:
-            source_files.extend([str(f) for f in self.project_dir.rglob(ext)])
+            source_files.extend([str(f.resolve()) for f in self.project_dir.rglob(ext)])
 
         if not source_files:
             raise ValueError(f"No C++ source files found in {self.project_dir}")
@@ -149,10 +153,9 @@ class CppAnalysis:
             source_files=source_files,
             extra_args=extra_compiler_args or [],
             compilation_db_path=compilation_db,
-            project_root=str(self.project_dir),
+            project_root=project_dir_str,
             mode=self._get_analysis_level(analysis_level),
         )
-
         # Get the tree-based application model (pybind11 object)
         app_pybind = self.analyzer.get_application_model()
         self._symbol_db = self.analyzer.get_symbol_db()
