@@ -27,6 +27,7 @@ from cldk.models.c import (
     VariableFilter,
 )
 import sys
+import os
 
 
 # the backend uses: symbols | callgraph
@@ -36,6 +37,15 @@ _ANALYSIS_MAP = {
     AnalysisLevel.program_dependency_graph: "callgraph",  # not supported, default to callgraph
     AnalysisLevel.system_dependency_graph: "callgraph",  # not supported, default to callgraph
 }
+
+def path_is_within_a_test_directory(path: str, project_root: str, name_to_check_for: str = "test"):
+    parts = path[len(project_root):].split(os.sep)
+    if name_to_check_for in parts:
+        return True
+    return False
+
+def remove_test_files(source_files: list[str], project_root: str) -> list[str]:
+    return [f for f in source_files if not path_is_within_a_test_directory(f, project_root)]
 
 # TEMP right now we're using this function here
 # eventually we'll want to integrate upstream directly into CallGraphAnalyzer.analyze
@@ -49,7 +59,8 @@ def safe_analyze(
     extra_args: list[str] = [],
 ):
     all_args = {
-        "source_files": source_files,
+        # TODO maybe remove_test_files should be one of the file_filters?
+        "source_files": remove_test_files(source_files, project_root),
         "compilation_db_path": compilation_db_path,
         "file_filters": file_filters,
         "extra_args": extra_args,
@@ -74,6 +85,8 @@ def safe_analyze(
         all_args.pop("compilation_db_path")
 
 
+
+    print(f"all_args : \n{json.dumps(all_args, indent=4)}")
     result = analyzer.analyze(**all_args)
     return result
 
