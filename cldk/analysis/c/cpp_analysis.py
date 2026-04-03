@@ -47,6 +47,15 @@ def path_is_within_a_test_directory(path: str, project_root: str, name_to_check_
 def remove_test_files(source_files: list[str], project_root: str) -> list[str]:
     return [f for f in source_files if not path_is_within_a_test_directory(f, project_root)]
 
+def find_includes(project_root: str) -> list[str]:
+    project_root_path = Path(project_root)
+    include_path = project_root_path / "include"
+    all_includes: list[str] = []
+    for p in include_path.rglob("*"):
+        if p.is_dir():
+            all_includes.append(str(p))
+    return all_includes
+
 # TEMP right now we're using this function here
 # eventually we'll want to integrate upstream directly into CallGraphAnalyzer.analyze
 def safe_analyze(
@@ -58,6 +67,7 @@ def safe_analyze(
     file_filters: list[str] = [],
     extra_args: list[str] = [],
 ):
+    import json
     all_args = {
         # TODO maybe remove_test_files should be one of the file_filters?
         "source_files": remove_test_files(source_files, project_root),
@@ -78,7 +88,6 @@ def safe_analyze(
             "/opt/homebrew/Cellar/llvm@18/18.1.8/lib/clang/18",
             "-isysroot",
             "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
-            # "-I../test/test_project", # TODO make sure this one is set programmatically
             "-I/opt/homebrew/opt/llvm@18/include",
         ]
         # all_args.pop("file_filters")
@@ -123,7 +132,7 @@ class CppAnalysis:
     def _init_application(
         self,
         compilation_db_path: Optional[Union[Path, str]] = None,
-        extra_compiler_args: Optional[List[str]] = None,
+        extra_compiler_args: List[str] = [],
         analysis_level: AnalysisLevel = AnalysisLevel.symbol_table,
     ) -> CppApplication:
         """Construct the C++ application model from project sources.
@@ -160,11 +169,14 @@ class CppAnalysis:
             build_dir = self.project_dir / "build"
             compilation_db = str(build_dir) if build_dir.exists() else ""
 
+        include_dirs = find_includes(project_dir_str)
+
+        extra_compiler_args.extend([f"-I{d}" for d in include_dirs])
         # Run analysis
         safe_analyze(
             self.analyzer,
             source_files=source_files,
-            extra_args=extra_compiler_args or [],
+            extra_args=extra_compiler_args,
             compilation_db_path=compilation_db,
             project_root=project_dir_str,
             mode=self._get_analysis_level(analysis_level),
