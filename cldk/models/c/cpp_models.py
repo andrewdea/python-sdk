@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import List, Optional, Any
 from enum import Enum
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-
+from cldk.models.c import CppClass
 
 # -------------------------
 # Enums (string-backed)
@@ -508,6 +508,7 @@ class CppTranslationUnit(PybindBaseModel):
     typedefs: List[CppTypedef] = Field(default_factory=list)
     usings: List[CppUsing] = Field(default_factory=list)
     macros: List[CppMacro] = Field(default_factory=list)
+    classes: List[CppClass] = Field(default_factory=list)
 
 
 # -------------------------
