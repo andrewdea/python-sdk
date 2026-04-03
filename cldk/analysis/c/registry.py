@@ -3,6 +3,8 @@ from cldk.analysis.c.c_analysis import CAnalysis
 from typing import Optional, Union
 from dataclasses import dataclass
 
+from cldk.analysis.c.cpp_analysis import CppAnalysis
+
 
 @dataclass
 class CCodebase:
@@ -30,7 +32,7 @@ class CCodebase:
         self.hash = hash
 
     @property
-    def analysis(self) -> CAnalysis:
+    def analysis(self) -> CppAnalysis:
         """
         Uses the analysis_registry to create or retrieve the analyzed codebase
         """
@@ -43,20 +45,20 @@ class AnalysisRegistry:
 
     Uses a dictionary to map codebase paths to their analysis.
     """
-    as_dict: dict[str, CAnalysis] = {}
+    as_dict: dict[str, CppAnalysis] = {}
 
-    def create_analysis(self, project_dir: str | Path) -> CAnalysis:
+    def create_analysis(self, project_dir: str | Path) -> CppAnalysis:
         """
         Analyze the codebase at project_dir, store its analysis within this class,
         and return it.
 
         :param project_dir: str|Path where the codebase is stored
         """
-        analysis = CAnalysis(Path(project_dir))
+        analysis = CppAnalysis(Path(project_dir))
         self.as_dict[str(project_dir)] = analysis
         return analysis
 
-    def get(self, project_dir: str | Path) -> CAnalysis:
+    def get(self, project_dir: str | Path) -> CppAnalysis:
         """
         Retrieve the analysis for the codebase at project_dir.
         If it has already been analyzed, simply retrieve it from our dictionary.
