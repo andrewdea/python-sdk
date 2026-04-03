@@ -38,23 +38,38 @@ _ANALYSIS_MAP = {
     AnalysisLevel.system_dependency_graph: "callgraph",  # not supported, default to callgraph
 }
 
-def path_is_within_a_test_directory(path: str, project_root: str, name_to_check_for: str = "test"):
-    parts = path[len(project_root):].split(os.sep)
+
+def path_is_within_a_test_directory(
+    path: str, project_root: str, name_to_check_for: str = "test"
+):
+    parts = path[len(project_root) :].split(os.sep)
     if name_to_check_for in parts:
         return True
     return False
 
-def remove_test_files(source_files: list[str], project_root: str) -> list[str]:
-    return [f for f in source_files if not path_is_within_a_test_directory(f, project_root)]
 
-def find_includes(project_root: str) -> list[str]:
+def remove_test_files(source_files: list[str], project_root: str) -> list[str]:
+    return [
+        f for f in source_files if not path_is_within_a_test_directory(f, project_root)
+    ]
+
+
+def find_includes(project_root: str, with_subdirs: bool = True) -> list[str]:
     project_root_path = Path(project_root)
     include_path = project_root_path / "include"
     all_includes: list[str] = []
-    for p in include_path.rglob("*"):
-        if p.is_dir():
-            all_includes.append(str(p))
+
+    # Add the include directory itself first
+    if include_path.exists() and include_path.is_dir():
+        all_includes.append(str(include_path))
+
+    # Then add all subdirectories
+    if with_subdirs:
+        for p in include_path.rglob("*"):
+            if p.is_dir():
+                all_includes.append(str(p))
     return all_includes
+
 
 # TEMP right now we're using this function here
 # eventually we'll want to integrate upstream directly into CallGraphAnalyzer.analyze
