@@ -4,7 +4,9 @@ from typing import Optional, Union
 from dataclasses import dataclass
 
 from cldk.analysis.c.cpp_analysis import CppAnalysis
-
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 @dataclass
 class CCodebase:

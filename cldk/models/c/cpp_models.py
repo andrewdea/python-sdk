@@ -281,6 +281,11 @@ class CppFunction(CppEntity):
     access: Optional[CppAccessSpecifier] = None
 
     attributes: List[str] = Field(default_factory=list)
+    # the file_path attribute is optional for now, because it's not always straightforward to
+    # compute it depending on context
+    file_path: Optional[str] = None
+    
+    cyclomatic_complexity: Optional[int] = None
 
     @field_validator("specifiers", mode="before")
     @classmethod

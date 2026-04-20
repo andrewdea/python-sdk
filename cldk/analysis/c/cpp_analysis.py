@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Union
 import networkx as nx
 
 import clang_callgraph
-
+import json
 from cldk.analysis import AnalysisLevel
 from cldk.models.c import (
     CppApplication,
@@ -26,6 +26,8 @@ from cldk.models.c import (
     CppRecordKind,
     VariableFilter,
 )
+from cldk.analysis.c.process_parsed_file_treesitter import tree_sitter_cpp, process_class_from_node
+from orchard.helpers.perched import get_nodes_of_type, get_nodes_of_multiple_types
 import sys
 import os
 
@@ -39,18 +41,29 @@ _ANALYSIS_MAP = {
 }
 
 
-def path_is_within_a_test_directory(
-    path: str, project_root: str, name_to_check_for: str = "test"
+def path_is_within_certain_directories(
+    path: str, project_root: str, names_to_check_for: list[str] = ["test"]
 ):
     parts = path[len(project_root) :].split(os.sep)
-    if name_to_check_for in parts:
-        return True
+    for name in names_to_check_for:
+        if name in parts:
+            return True
     return False
 
 
 def remove_test_files(source_files: list[str], project_root: str) -> list[str]:
     return [
-        f for f in source_files if not path_is_within_a_test_directory(f, project_root)
+        f
+        for f in source_files
+        if not path_is_within_certain_directories(f, project_root)
+    ]
+
+
+def remove_files_in_dirs(source_files, project_root: str, dirs: list[str]) -> list[str]:
+    return [
+        f
+        for f in source_files
+        if not path_is_within_certain_directories(f, project_root, dirs)
     ]
 
 
@@ -78,24 +91,33 @@ def safe_analyze(
     source_files: list[str],
     compilation_db_path: str,
     project_root: str,
-    mode: str,
+    mode: Optional[str] = None,
     file_filters: list[str] = [],
     extra_args: list[str] = [],
 ):
-    import json
+    print(f"From: `safe_analyze` in cpp_analysis.py; line number: 85; ")
+    include_dirs = find_includes(project_root)
+
+    source_files = remove_files_in_dirs(
+        source_files, project_root, ["test", "build", "CMakeFiles", "performance"]
+    )
+    extra_args.extend([f"-I{d}" for d in include_dirs])
     all_args = {
-        # TODO maybe remove_test_files should be one of the file_filters?
-        "source_files": remove_test_files(source_files, project_root),
+        "source_files": source_files,
         "compilation_db_path": compilation_db_path,
         "file_filters": file_filters,
         "extra_args": extra_args,
-        "project_root": project_root,
-        "mode": mode,
+        # "mode": mode
     }
+    if mode is not None:
+        all_args["mode"] = mode
 
     # TEMP: on macOS, we need extra args, and we seemingly cannot set the
     # compilation_db_path arg
     # TODO investigate the root cause of this and fix it
+    print(
+        f"From: `safe_analyze` in utils.py; line number: 55; compilation_db_path : {compilation_db_path}"
+    )
     if sys.platform == "darwin":
         all_args["extra_args"] = extra_args + [
             # "-std=c++17",
@@ -108,11 +130,27 @@ def safe_analyze(
         # all_args.pop("file_filters")
         all_args.pop("compilation_db_path")
 
-
-
-    print(f"all_args : \n{json.dumps(all_args, indent=4)}")
+    print(
+        f"From: `safe_analyze` in utils.py; line number: 68; all_args : \n{json.dumps(all_args, indent=4)}"
+    )
     result = analyzer.analyze(**all_args)
     return result
+
+
+def enhance_analysis(app: CppApplication) -> CppApplication:
+
+    # add classes, if they're not already there
+    for tu in app.translation_units:
+        if len(tu.classes) > 0:
+            continue
+        tree = tree_sitter_cpp.parse_file(tu.file_path)
+        for node in get_nodes_of_multiple_types(
+            tree, ("class_specifier", "struct_specifier")
+        ):
+            node_class = process_class_from_node(node, file_path=tu.file_path)
+            if node_class:
+                tu.classes.append(node_class)
+    return app
 
 
 class CppAnalysis:
@@ -143,6 +181,7 @@ class CppAnalysis:
         self.cpp_application: CppApplication = self._init_application(
             compilation_db_path, extra_compiler_args or [], analysis_level
         )
+        self.cpp_application = enhance_analysis(self.cpp_application)
 
     def _init_application(
         self,
