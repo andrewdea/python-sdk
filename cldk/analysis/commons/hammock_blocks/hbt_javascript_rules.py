@@ -86,13 +86,13 @@ class JavaScriptTSHBParsingRules:
         print(f"[JS] Dispatched to parse_import_statement for node: {node.type}")
         print(f"[JS] Import statement at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
-        
+
         # Extract the source module
         source_node = node.child_by_field_name("source")
         if source_node and source_node.type == "string":
-            module_name = source_node.text.decode("utf-8").strip('"\'')
+            module_name = source_node.text.decode("utf-8").strip("\"'")
             hammock_block.imported_packages.append(module_name)
-        
+
         return hammock_block, []
 
     @parse_ts_node.register("export_statement")
@@ -166,19 +166,21 @@ class JavaScriptTSHBParsingRules:
         print(f"[JS] Dispatched to parse_class_declaration for node: {node.type}")
         print(f"[JS] Class declaration at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
-        
+
         name_node = node.child_by_field_name("name")
         if name_node and name_node.type == "identifier":
             hammock_block.local_identifiers.append(name_node.text.decode("utf-8"))
-        
+
         # Handle class heritage (extends)
         heritage_node = node.child_by_field_name("heritage")
         if heritage_node:
             for child in heritage_node.named_children:
                 if child.type == "identifier":
-                    print(f"[JS] Found superclass identifier: {child.text.decode('utf-8')}")
+                    print(
+                        f"[JS] Found superclass identifier: {child.text.decode('utf-8')}"
+                    )
                     hammock_block.local_identifiers.append(child.text.decode("utf-8"))
-        
+
         current_parent = node.parent
         while current_parent:
             if current_parent.id in block_map and len(
@@ -186,7 +188,7 @@ class JavaScriptTSHBParsingRules:
             ):
                 break
             current_parent = current_parent.parent
-        
+
         if current_parent and current_parent.id in block_map:
             hammock_block.block_full_qualifier = (
                 block_map[current_parent.id].block_full_qualifier
@@ -255,7 +257,7 @@ class JavaScriptTSHBParsingRules:
     ) -> Tuple[Optional[TSHammockBlock], List[TSHammockBlock]]:
         """Helper to parse function-like constructs"""
         hammock_block = self._base_block_builder(node)
-        
+
         # Get function name
         name_node = node.child_by_field_name("name")
         if name_node and name_node.type == "identifier":
@@ -265,8 +267,10 @@ class JavaScriptTSHBParsingRules:
             if node.parent and node.parent.type == "variable_declarator":
                 var_name = node.parent.child_by_field_name("name")
                 if var_name:
-                    hammock_block.local_identifiers.append(var_name.text.decode("utf-8"))
-        
+                    hammock_block.local_identifiers.append(
+                        var_name.text.decode("utf-8")
+                    )
+
         # Get parameters
         parameters_node = node.child_by_field_name("parameters")
         if parameters_node:
@@ -278,14 +282,16 @@ class JavaScriptTSHBParsingRules:
                     # Handle rest parameters (...args)
                     rest_id = param.child_by_field_name("name")
                     if rest_id:
-                        hammock_block.local_variables.append(rest_id.text.decode("utf-8"))
+                        hammock_block.local_variables.append(
+                            rest_id.text.decode("utf-8")
+                        )
                 elif param.type in ["object_pattern", "array_pattern"]:
                     # Handle destructured parameters
                     identifiers, variables, strings = (
                         self._find_identifiers_locals_strings_in_subtree(param)
                     )
                     hammock_block.local_variables.extend(variables)
-        
+
         # Build full qualifier
         current_parent = node.parent
         while current_parent:
@@ -294,7 +300,7 @@ class JavaScriptTSHBParsingRules:
             ):
                 break
             current_parent = current_parent.parent
-        
+
         if current_parent and current_parent.id in block_map:
             func_name = name_node.text.decode("utf-8") if name_node else "anonymous"
             hammock_block.block_full_qualifier = (
@@ -303,7 +309,7 @@ class JavaScriptTSHBParsingRules:
             hammock_block.project_full_qualifier = (
                 block_map[current_parent.id].project_full_qualifier + "." + func_name
             )
-        
+
         return hammock_block, []
 
     @parse_ts_node.register("return_statement")
@@ -313,7 +319,7 @@ class JavaScriptTSHBParsingRules:
         """Parse JavaScript return statement"""
         print(f"[JS] Dispatched to parse_return_statement for node: {node.type}")
         print(f"[JS] Return statement at line {node.start_point.row + 1}")
-        
+
         identifiers, variables, strings = (
             self._find_identifiers_locals_strings_in_subtree(node)
         )
@@ -324,13 +330,13 @@ class JavaScriptTSHBParsingRules:
             ):
                 break
             current_parent = current_parent.parent
-        
+
         if current_parent and current_parent.id in block_map:
             hammock_block = block_map[current_parent.id]
             hammock_block.local_identifiers.extend(identifiers)
             hammock_block.local_variables.extend(variables)
             hammock_block.string_literals.extend(strings)
-        
+
         return None, []
 
     @parse_ts_node.register("expression_statement")
@@ -340,13 +346,14 @@ class JavaScriptTSHBParsingRules:
         """Parse JavaScript expression statement"""
         print(f"[JS] Dispatched to parse_expression_statement for node: {node.type}")
         print(f"[JS] Expression statement at line {node.start_point.row + 1}")
-        
+
         # Only parse expression statements at module level or directly in function/class bodies
         if node.parent and (
             node.parent.type == "program"
             or node.parent.type == "statement_block"
             and node.parent.parent
-            and node.parent.parent.type in [
+            and node.parent.parent.type
+            in [
                 "function_declaration",
                 "arrow_function",
                 "function_expression",
@@ -355,7 +362,7 @@ class JavaScriptTSHBParsingRules:
             ]
         ):
             hammock_block = self._base_block_builder(node)
-            
+
             identifiers, variables, strings = (
                 self._find_identifiers_locals_strings_in_subtree(node)
             )
@@ -364,7 +371,9 @@ class JavaScriptTSHBParsingRules:
             hammock_block.string_literals.extend(strings)
             return hammock_block, []
         else:
-            print(f"[JS] Skipping expression_statement not at appropriate level: {node.type}")
+            print(
+                f"[JS] Skipping expression_statement not at appropriate level: {node.type}"
+            )
             return None, []
 
     @parse_ts_node.register("variable_declaration")
@@ -374,20 +383,20 @@ class JavaScriptTSHBParsingRules:
         """Parse JavaScript variable declaration (var/let/const)"""
         print(f"[JS] Dispatched to parse_variable_declaration for node: {node.type}")
         print(f"[JS] Variable declaration at line {node.start_point.row + 1}")
-        
+
         identifiers, variables, strings = (
             self._find_identifiers_locals_strings_in_subtree(node)
         )
         current_parent = node.parent
         while current_parent and (current_parent.id not in block_map):
             current_parent = current_parent.parent
-        
+
         if current_parent and current_parent.id in block_map:
             hammock_block = block_map[current_parent.id]
             hammock_block.local_identifiers.extend(identifiers)
             hammock_block.local_variables.extend(variables)
             hammock_block.string_literals.extend(strings)
-        
+
         return None, []
 
     @parse_ts_node.register("if_statement")
@@ -403,7 +412,7 @@ class JavaScriptTSHBParsingRules:
         # Parse condition and consequence
         condition_node = node.child_by_field_name("condition")
         consequence_node = node.child_by_field_name("consequence")
-        
+
         if condition_node and consequence_node:
             print(f"[JS] IF clause at line {condition_node.start_point.row + 1}")
             if_consequence_child_block = self._base_block_builder(consequence_node)
@@ -437,7 +446,9 @@ class JavaScriptTSHBParsingRules:
         if alternative_node:
             if alternative_node.type == "if_statement":
                 # This is an else-if, handle recursively
-                print(f"[JS] Else-if clause at line {alternative_node.start_point.row + 1}")
+                print(
+                    f"[JS] Else-if clause at line {alternative_node.start_point.row + 1}"
+                )
                 elif_block, elif_additional = self.parse_ts_node(
                     alternative_node, block_map, source_file
                 )
@@ -450,8 +461,12 @@ class JavaScriptTSHBParsingRules:
                     additional_blocks_list.extend(elif_additional)
             else:
                 # This is an else clause
-                print(f"[JS] Else clause at line {alternative_node.start_point.row + 1}")
-                else_consequence_child_block = self._base_block_builder(alternative_node)
+                print(
+                    f"[JS] Else clause at line {alternative_node.start_point.row + 1}"
+                )
+                else_consequence_child_block = self._base_block_builder(
+                    alternative_node
+                )
                 else_consequence_child_block.block_type = "else_clause"
 
                 identifiers, variables, strings = (
@@ -465,7 +480,9 @@ class JavaScriptTSHBParsingRules:
                 hammock_block.children_ids.append(else_consequence_child_block.block_id)
                 else_consequence_child_block.parent = hammock_block
                 assert else_consequence_child_block.block_id not in block_map
-                block_map[else_consequence_child_block.block_id] = else_consequence_child_block
+                block_map[else_consequence_child_block.block_id] = (
+                    else_consequence_child_block
+                )
                 additional_blocks_list.append(else_consequence_child_block)
 
         return hammock_block, additional_blocks_list
@@ -522,7 +539,7 @@ class JavaScriptTSHBParsingRules:
         print(f"[JS] Dispatched to parse_for_statement for node: {node.type}")
         print(f"[JS] For loop at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
-        
+
         # Parse initializer, condition, increment
         initializer_node = node.child_by_field_name("initializer")
         condition_node = node.child_by_field_name("condition")
@@ -548,7 +565,7 @@ class JavaScriptTSHBParsingRules:
         print(f"[JS] Dispatched to parse_for_in_statement for node: {node.type}")
         print(f"[JS] For-in loop at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
-        
+
         left_node = node.child_by_field_name("left")
         right_node = node.child_by_field_name("right")
         body_node = node.child_by_field_name("body")
@@ -572,7 +589,7 @@ class JavaScriptTSHBParsingRules:
         print(f"[JS] Dispatched to parse_for_of_statement for node: {node.type}")
         print(f"[JS] For-of loop at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
-        
+
         left_node = node.child_by_field_name("left")
         right_node = node.child_by_field_name("right")
         body_node = node.child_by_field_name("body")
@@ -596,7 +613,7 @@ class JavaScriptTSHBParsingRules:
         print(f"[JS] Dispatched to parse_while_statement for node: {node.type}")
         print(f"[JS] While loop at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
-        
+
         condition_node = node.child_by_field_name("condition")
         body_node = node.child_by_field_name("body")
 
@@ -619,7 +636,7 @@ class JavaScriptTSHBParsingRules:
         print(f"[JS] Dispatched to parse_do_statement for node: {node.type}")
         print(f"[JS] Do-while loop at line {node.start_point.row + 1}")
         hammock_block = self._base_block_builder(node)
-        
+
         body_node = node.child_by_field_name("body")
         condition_node = node.child_by_field_name("condition")
 
@@ -768,7 +785,10 @@ class JavaScriptTSHBParsingRules:
                 continue
             elif current_node.type == "member_expression":
                 # Handle property access (obj.prop)
-                if current_node.parent and current_node.parent.type == "call_expression":
+                if (
+                    current_node.parent
+                    and current_node.parent.type == "call_expression"
+                ):
                     # This is a method call
                     identifiers.append(current_node.text.decode("utf-8"))
                 else:
@@ -810,10 +830,10 @@ class JavaScriptTSHBParsingRules:
         """Check if the identifier is likely a method or class name based on its parent type."""
         parent = node.parent
         grandparent = parent.parent if parent else None
-        
+
         if not parent:
             return False
-        
+
         # Function/class declarations
         if parent.type in [
             "function_declaration",
@@ -824,15 +844,19 @@ class JavaScriptTSHBParsingRules:
             "class_declaration",
         ]:
             return True
-        
+
         # Function calls
         if parent.type in ["call_expression", "new_expression"]:
             return True
-        
+
         # Member expressions that are being called
-        if parent.type == "member_expression" and grandparent and grandparent.type == "call_expression":
+        if (
+            parent.type == "member_expression"
+            and grandparent
+            and grandparent.type == "call_expression"
+        ):
             return True
-        
+
         return False
 
     def _post_process_hammock_blocks(self, pdg: dict, block_map):
@@ -852,7 +876,7 @@ class JavaScriptTSHBParsingRules:
                         hammock_block.end_point,
                     ]
                 )
-        
+
         # Merge the consecutive straightline blocks
         for parent_block_id, blocks in basic_block_bookkeeping.items():
             if len(blocks) < 2:
