@@ -6,11 +6,13 @@ from cldk.analysis.commons.hammock_blocks.hb_definition import (
 from typing import Dict, List, Optional, Tuple
 import cldk.analysis.commons.hammock_blocks.hbt_python_rules as hbt_python_rules
 import cldk.analysis.commons.hammock_blocks.hbt_java_rules as hbt_java_rules
+import cldk.analysis.commons.hammock_blocks.hbt_javascript_rules as hbt_javascript_rules
 from cldk.analysis.commons.hammock_blocks.data_types import ParsingMode
 
 # import cldk.analysis.commons.hammock_blocks.hbt_configs as hbt_configs
 import tree_sitter_python as tspython
 import tree_sitter_java as tsjava
+import tree_sitter_javascript as tsjavascript
 import os
 import pickle
 import glob
@@ -41,6 +43,8 @@ class PyHbtParser:
                 ts_language = Language(tsjava.language())
             case "python":
                 ts_language = Language(tspython.language())
+            case "javascript":
+                ts_language = Language(tsjavascript.language())
             case _:
                 raise NotImplementedError(
                     f"This language is not supported yet: {language}"
@@ -61,6 +65,12 @@ class PyHbtParser:
                     )
                 case "python":
                     self.parsing_rules = hbt_python_rules.PythonTSHBParsingRules(
+                        source_code_dir_list,
+                        self.src_file_to_dir_map,
+                        # cg_backend=hbt_configs.PY_CG_BACKEND,
+                    )
+                case "javascript":
+                    self.parsing_rules = hbt_javascript_rules.JavaScriptTSHBParsingRules(
                         source_code_dir_list,
                         self.src_file_to_dir_map,
                         # cg_backend=hbt_configs.PY_CG_BACKEND,

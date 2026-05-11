@@ -61,6 +61,8 @@ class HammockBlockTreeBuilder:
                 root_type = "module"
             case "java":
                 root_type = "program"
+            case "javascript":
+                root_type = "program"
             case _:
                 raise NotImplementedError(
                     f"this language is not currently supported: {language}"
@@ -102,6 +104,24 @@ class HammockBlockTreeBuilder:
                         func_parameters=[],
                     )
                 case "java":
+                    lang_hammock_block = JHammockBlock(
+                        block_id=node.block_id,
+                        block_full_qualifier=node.block_full_qualifier,
+                        project_full_qualifier=node.project_full_qualifier,
+                        block_type=node.block_type,
+                        start_line=node.start_point.row + 1 if node.start_point else -1,
+                        end_line=node.end_point.row + 1 if node.end_point else -1,
+                        children=[child.block_id for child in children],
+                        meta_data=node.meta_data,
+                        local_variables=[],
+                        accessed_variables=[],
+                        call_sites=[],
+                        relations=[],
+                        class_attributes=[],
+                        func_parameters=[],
+                    )
+                case "javascript":
+                    # TEMP using Java HB when I should use javascript
                     lang_hammock_block = JHammockBlock(
                         block_id=node.block_id,
                         block_full_qualifier=node.block_full_qualifier,

@@ -70,8 +70,15 @@ class GenericApplication(BaseModel):
     symbol_table: dict[Path, GenericFile]
 
 
+# NOTE: using orchard, we could have a generic solution for this
+# leveraging OrchardLanguage.extensions
 def list_java_files(project_dir: Path) -> list[Path]:
     java_files = [j_file for j_file in project_dir.rglob("*.java")]
+    return java_files
+
+
+def list_javascript_files(project_dir: Path) -> list[Path]:
+    java_files = [j_file for j_file in project_dir.rglob("*.js")]
     return java_files
 
 
@@ -101,6 +108,8 @@ def build_symbol_table(project_dir: Path, language: str) -> dict[Path, GenericFi
             files = list_java_files(project_dir)
         case "python":
             files = list_python_files(project_dir)
+        case "javascript":
+            files = list_javascript_files(project_dir)
         case _:
             raise NotImplementedError(f"This language is not supported yet: {language}")
 
