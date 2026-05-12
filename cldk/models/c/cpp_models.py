@@ -140,7 +140,7 @@ class CppTemplateParameter(PybindBaseModel):
             v_lower = v.lower()
             if v_lower == "type":
                 return CppTemplateParamKind.TYPE
-            elif v_lower == "non_type":
+            elif v_lower == "non-type":
                 return CppTemplateParamKind.NON_TYPE
             elif v_lower == "template":
                 return CppTemplateParamKind.TEMPLATE
@@ -284,7 +284,7 @@ class CppFunction(CppEntity):
     # the file_path attribute is optional for now, because it's not always straightforward to
     # compute it depending on context
     file_path: Optional[str] = None
-    
+
     cyclomatic_complexity: Optional[int] = None
 
     @field_validator("specifiers", mode="before")
