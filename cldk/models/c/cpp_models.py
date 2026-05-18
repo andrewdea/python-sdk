@@ -95,6 +95,54 @@ class SourceLocation(PybindBaseModel):
     end_line: int
     end_column: int
 
+    def get_source_content(self) -> str:
+        """
+        Returns the contents of the file between start_line, start_column
+        and end_line, end_column.
+
+        Returns:
+            str: The source code snippet from the specified location
+        """
+        try:
+            with open(self.file, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+
+            # Validate line numbers
+            if self.start_line < 1 or self.end_line < 1:
+                raise ValueError("Line numbers must be >= 1")
+            if self.start_line > len(lines) or self.end_line > len(lines):
+                raise ValueError(
+                    f"Line numbers out of range (file has {len(lines)} lines)"
+                )
+
+            # Handle single line case
+            if self.start_line == self.end_line:
+                line = lines[self.start_line - 1]
+                # Columns are 1-based, convert to 0-based for slicing
+                return line[self.start_column - 1 : self.end_column]
+
+            # Handle multi-line case
+            result = []
+
+            # First line: from start_column to end
+            first_line = lines[self.start_line - 1]
+            result.append(first_line[self.start_column - 1 :])
+
+            # Middle lines: entire lines
+            for line_num in range(self.start_line + 1, self.end_line):
+                result.append(lines[line_num - 1])
+
+            # Last line: from beginning to end_column
+            last_line = lines[self.end_line - 1]
+            result.append(last_line[: self.end_column])
+
+            return "".join(result)
+
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Source file not found: {self.file}")
+        except Exception as e:
+            raise RuntimeError(f"Error getting source for file: {self.file}; {e}")
+
 
 class CppEntity(PybindBaseModel):
     name: str
