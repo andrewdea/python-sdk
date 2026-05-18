@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import List, Optional, Any
 from enum import Enum
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from cldk.models.c import CppClass
+from cldk.analysis.c.utils import compute_cyclomatic_complexity
 
 # -------------------------
 # Enums (string-backed)
@@ -332,7 +333,7 @@ class CppFunction(CppEntity):
     # the file_path attribute is optional for now, because it's not always straightforward to
     # compute it depending on context
     file_path: Optional[str] = None
-    
+
     cyclomatic_complexity: Optional[int] = None
 
     @field_validator("specifiers", mode="before")
@@ -403,6 +404,16 @@ class CppFunction(CppEntity):
         if hasattr(v, "name"):
             return v.name.lower()
         return v
+
+    @model_validator(mode="after")
+    def compute_cyclomatic_complexity(self) -> "CppFunction":
+        """Compute cyclomatic complexity if not provided"""
+        if self.cyclomatic_complexity is None:
+            self.cyclomatic_complexity = compute_cyclomatic_complexity(
+                self.location.get_source_content()
+            )
+        return self
+
 
 
 class CppVariable(CppEntity):
