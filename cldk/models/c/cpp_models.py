@@ -286,6 +286,7 @@ class CppFunction(CppEntity):
     file_path: Optional[str] = None
 
     cyclomatic_complexity: Optional[int] = None
+    type_reference_usrs: List[str] = Field(default_factory=list)
 
     @field_validator("specifiers", mode="before")
     @classmethod
