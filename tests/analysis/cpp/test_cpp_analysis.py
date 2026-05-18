@@ -23,6 +23,8 @@ from pathlib import Path
 import json
 import sys
 import logging
+from cldk.analysis.c.utils import compute_cyclomatic_complexity
+from cldk.models.c.cpp_models import CppFunction
 
 logging.basicConfig()
 logger = logging.getLogger(__package__)
@@ -94,10 +96,17 @@ def test_cpp_application(project_dir: Path = EXAMPLE_PROJECT_DIR):
         f"Expected variable_names: \n{json.dumps(expected_variable_names, indent=4)}\ninstead got: \n{json.dumps(variable_names, indent=4)}"
     )
 
+    test_enums_func = analysis.get_function("testEnums")
+    assert isinstance(test_enums_func, CppFunction), (
+        "testEnums should be a CppFunction object"
+    )
+    assert test_enums_func.cyclomatic_complexity == 6, (
+        f"Expected cyclomatic_complexity of 6 for testEnums, got {test_enums_func.cyclomatic_complexity}"
+    )
+
 
 def test_cyclomatic_complexity():
     """Test cyclomatic complexity calculation for C++ code snippets"""
-    from cldk.analysis.c.cpp_analysis import compute_cyclomatic_complexity
 
     # Complexity 1 - Simple statements (no decision points)
     snippet_1a = "int x = 0;"
