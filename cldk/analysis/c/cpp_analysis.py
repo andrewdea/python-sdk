@@ -8,6 +8,7 @@ extracting symbols, building call graphs, and querying code structure.
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 import networkx as nx
+from tree_sitter import Node
 
 import clang_callgraph
 import json
@@ -26,7 +27,10 @@ from cldk.models.c import (
     CppRecordKind,
     VariableFilter,
 )
-from cldk.analysis.c.process_parsed_file_treesitter import tree_sitter_cpp, process_class_from_node
+from cldk.analysis.c.process_parsed_file_treesitter import (
+    tree_sitter_cpp,
+    process_class_from_node,
+)
 from orchard.helpers.perched import get_nodes_of_type, get_nodes_of_multiple_types
 import sys
 import os
@@ -138,7 +142,6 @@ def safe_analyze(
 
 
 def enhance_analysis(app: CppApplication) -> CppApplication:
-
     # add classes, if they're not already there
     for tu in app.translation_units:
         if len(tu.classes) > 0:
