@@ -416,7 +416,6 @@ class CppFunction(CppEntity):
         return self
 
 
-
 class CppVariable(CppEntity):
     """Variable declaration/definition"""
 
@@ -512,6 +511,7 @@ class CppRecord(CppEntity):
     is_trivially_copyable: bool = False
     is_anonymous: bool = False
     is_lambda: bool = False
+    is_friend: bool = False
 
     fields: List[CppField] = Field(default_factory=list)
     bases: List[CppBaseClass] = Field(default_factory=list)

@@ -1,12 +1,15 @@
 from pathlib import Path
+from cldk.analysis import AnalysisLevel
 from cldk.analysis.c.c_analysis import CAnalysis
-from typing import Optional, Union
+from typing import List, Optional, Union
 from dataclasses import dataclass
 
 from cldk.analysis.c.cpp_analysis import CppAnalysis
 import logging
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
 
 @dataclass
 class CCodebase:
@@ -17,6 +20,7 @@ class CCodebase:
     :param name: str, defaults to the name of the root directory
     :param hash: str, optional hash to identify the codebase version, defaults to None
     """
+
     root: Path
     name: str
     hash: Optional[str] = None
@@ -47,27 +51,60 @@ class AnalysisRegistry:
 
     Uses a dictionary to map codebase paths to their analysis.
     """
+
     as_dict: dict[str, CppAnalysis] = {}
 
-    def create_analysis(self, project_dir: str | Path) -> CppAnalysis:
+    def create_analysis(
+        self,
+        project_dir: str | Path,
+        compilation_db_path: Optional[Union[Path, str]] = None,
+        extra_compiler_args: Optional[List[str]] = None,
+        analysis_level: AnalysisLevel = AnalysisLevel.symbol_table,
+        skip_fatal_errors: Optional[bool] = True,
+    ) -> CppAnalysis:
         """
         Analyze the codebase at project_dir, store its analysis within this class,
         and return it.
 
         :param project_dir: str|Path where the codebase is stored
         """
-        analysis = CppAnalysis(Path(project_dir))
+        analysis = CppAnalysis(
+            project_dir=Path(project_dir),
+            compilation_db_path=compilation_db_path,
+            extra_compiler_args=extra_compiler_args,
+            analysis_level=analysis_level,
+            skip_fatal_errors=skip_fatal_errors,
+        )
         self.as_dict[str(project_dir)] = analysis
         return analysis
 
-    def get(self, project_dir: str | Path) -> CppAnalysis:
+    # TODO: not the best way of doing this since we're caching at project
+    # root level, but we're not taking into consideration the extra config
+    def get(
+        self,
+        project_dir: str | Path,
+        compilation_db_path: Optional[Union[Path, str]] = None,
+        extra_compiler_args: Optional[List[str]] = None,
+        analysis_level: AnalysisLevel = AnalysisLevel.symbol_table,
+        skip_fatal_errors: Optional[bool] = True,
+    ) -> CppAnalysis:
         """
         Retrieve the analysis for the codebase at project_dir.
         If it has already been analyzed, simply retrieve it from our dictionary.
         Else, analyze it. Then return it.
         """
         analysis = self.as_dict.get(str(project_dir))
-        return analysis if analysis is not None else self.create_analysis(project_dir)
+        return (
+            analysis
+            if analysis is not None
+            else self.create_analysis(
+                project_dir=project_dir,
+                compilation_db_path=compilation_db_path,
+                extra_compiler_args=extra_compiler_args,
+                analysis_level=analysis_level,
+                skip_fatal_errors=skip_fatal_errors,
+            )
+        )
 
 
 # this registry can be used by callers to analyze their codebases.

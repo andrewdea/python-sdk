@@ -98,6 +98,7 @@ def safe_analyze(
     mode: Optional[str] = None,
     file_filters: list[str] = [],
     extra_args: list[str] = [],
+    continue_on_error: Optional[bool] = True,
 ):
     print(f"From: `safe_analyze` in cpp_analysis.py; line number: 85; ")
     include_dirs = find_includes(project_root)
@@ -115,6 +116,9 @@ def safe_analyze(
     }
     if mode is not None:
         all_args["mode"] = mode
+
+    if continue_on_error is not None:
+        all_args["continue_on_error"] = continue_on_error
 
     # TEMP: on macOS, we need extra args, and we seemingly cannot set the
     # compilation_db_path arg
@@ -165,6 +169,7 @@ class CppAnalysis:
         compilation_db_path: Optional[Union[Path, str]] = None,
         extra_compiler_args: Optional[List[str]] = None,
         analysis_level: AnalysisLevel = AnalysisLevel.symbol_table,
+        skip_fatal_errors: Optional[bool] = True,
     ):
         """Initialize the C++ analysis backend.
 
@@ -172,6 +177,11 @@ class CppAnalysis:
             project_dir: Path to the C++ project directory.
             compilation_db_path: Optional path to compilation database directory.
                 If not provided, defaults to project_dir/build if it exists.
+            extra_compiler_args: Extra agruments to pass to the clang compiler
+            analysis_level: The level of analysis produced by the backend
+            skip_fatal_errors: On true tries to analyse the project even when fatal errors
+               occur (by skipping the translation unit throwing the error). On false,
+               it crashes the analysis.
         """
         if not isinstance(project_dir, Path):
             project_dir = Path(project_dir)
@@ -179,6 +189,7 @@ class CppAnalysis:
         self.project_dir = project_dir
         self.analyzer = clang_callgraph.CallGraphAnalyzer()
         self._symbol_db = None
+        self.skip_fatal_errors = skip_fatal_errors
 
         # Initialize the application model
         self.cpp_application: CppApplication = self._init_application(
