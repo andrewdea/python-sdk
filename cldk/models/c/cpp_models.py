@@ -151,6 +151,7 @@ class CppEntity(PybindBaseModel):
     location: SourceLocation
     is_definition: bool
     comment: Optional[str] = None
+    macro_expanded_text: Optional[str] = None
 
 
 # -------------------------
