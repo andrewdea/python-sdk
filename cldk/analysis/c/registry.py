@@ -46,6 +46,30 @@ class CCodebase:
         return analysis_registry.get(self.root)
 
 
+def compare_analyses(first: CppAnalysis, second: CppAnalysis) -> bool:
+    return (
+        first.cpp_application.compilation_db_path
+        == second.cpp_application.compilation_db_path
+        and first.cpp_application.extra_compiler_args
+        == second.cpp_application.extra_compiler_args
+        and first.cpp_application.analysis_level
+        == second.cpp_application.analysis_level
+    )
+
+
+def compare_configs(
+    analysis: CppAnalysis,
+    compilation_db_path: Optional[Union[Path, str]] = None,
+    extra_compiler_args: Optional[List[str]] = None,
+    analysis_level: AnalysisLevel = AnalysisLevel.symbol_table,
+) -> bool:
+    return (
+        compilation_db_path == analysis.cpp_application.compilation_db_path
+        and extra_compiler_args == analysis.cpp_application.extra_compiler_args
+        and analysis_level == analysis.cpp_application.analysis_level
+    )
+
+
 class AnalysisRegistry:
     """
     Handy class to keep track of analyzed codebases.
