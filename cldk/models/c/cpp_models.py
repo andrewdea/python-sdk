@@ -576,6 +576,11 @@ class CppTranslationUnit(PybindBaseModel):
     macros: List[CppMacro] = Field(default_factory=list)
     classes: List[CppClass] = Field(default_factory=list)
 
+    @computed_field
+    @property
+    def name(self) -> str:
+        return Path(self.file_path).stem
+
 
 # -------------------------
 # Call graph
