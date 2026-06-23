@@ -1,10 +1,20 @@
 from __future__ import annotations
 
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Union
+from pathlib import Path
 from enum import Enum
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from cldk import analysis
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator,
+    computed_field,
+)
 from cldk.models.c import CppClass
 from cldk.analysis.c.utils import compute_cyclomatic_complexity
+from cldk.analysis import AnalysisLevel
 
 # -------------------------
 # Enums (string-backed)
@@ -645,6 +655,9 @@ class CppApplication(PybindBaseModel):
     translation_units: List[CppTranslationUnit] = Field(default_factory=list)
     call_graph_edges: List[CppCallGraphEdge] = Field(default_factory=list)
     file_to_tu_index: dict[str, int] = Field(default_factory=dict)
+    compilation_db_path: Optional[Union[Path, str]] = None
+    extra_compiler_args: Optional[List[str]] = None
+    analysis_level: AnalysisLevel = AnalysisLevel.symbol_table
 
 
 # ------------------------

@@ -1,10 +1,11 @@
 from pathlib import Path
 from cldk.analysis import AnalysisLevel
 from cldk.analysis.c.c_analysis import CAnalysis
-from typing import List, Optional, Union
+from typing import Optional, Union, List
 from dataclasses import dataclass
 
 from cldk.analysis.c.cpp_analysis import CppAnalysis
+from cldk.analysis import AnalysisLevel
 import logging
 
 logger = logging.getLogger(__name__)
@@ -94,17 +95,20 @@ class AnalysisRegistry:
         Else, analyze it. Then return it.
         """
         analysis = self.as_dict.get(str(project_dir))
-        return (
-            analysis
-            if analysis is not None
-            else self.create_analysis(
-                project_dir=project_dir,
-                compilation_db_path=compilation_db_path,
-                extra_compiler_args=extra_compiler_args,
-                analysis_level=analysis_level,
-                skip_fatal_errors=skip_fatal_errors,
+        # check if this analysis has been created already,
+        # and verify that the same config was used.
+        # if not, create the analysis first
+        if analysis is None or not compare_configs(
+            analysis, compilation_db_path, extra_compiler_args, analysis_level
+        ):
+            analysis = self.create_analysis(
+                project_dir,
+                compilation_db_path,
+                extra_compiler_args,
+                analysis_level,
+                skip_fatal_errors,
             )
-        )
+        return analysis
 
 
 # this registry can be used by callers to analyze their codebases.
