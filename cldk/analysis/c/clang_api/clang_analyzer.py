@@ -93,7 +93,9 @@ class ClangAnalyzer:
         # On Linux, we check various common installation paths
         elif system == "Linux":
             lib_paths = [Path("/usr/lib"), Path("/usr/lib64")]
-            possible_paths = [str(p) for base in lib_paths if base.exists() for p in base.rglob("libclang*.so.17*")]
+            # TODO verify this works on Linux
+            # NOTE it should pickup libclang 18 (just like it does for Darwin)
+            possible_paths = [str(p) for base in lib_paths if base.exists() for p in base.rglob("libclang*.so.18*")]
             logger.debug(f"Candidate libclang paths: {possible_paths}")
             install_instructions = "Install libclang development package using your system's package manager"
         else:
