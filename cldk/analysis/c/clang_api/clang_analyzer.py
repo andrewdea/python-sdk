@@ -46,7 +46,6 @@ class ClangAnalyzer:
             compilation_database_path (Path | None): Optional path to a
                 compilation database (compile_commands.json directory).
         """
-        Config.set_library_file(self.__find_libclang())
 
         self.index = Index.create()
         self.compilation_database = None
