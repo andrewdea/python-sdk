@@ -237,9 +237,6 @@ class CppAnalysis:
             build_dir = self.project_dir / "build"
             compilation_db = str(build_dir) if build_dir.exists() else ""
 
-        include_dirs = find_includes(project_dir_str)
-
-        extra_compiler_args.extend([f"-I{d}" for d in include_dirs])
         # Run analysis
         safe_analyze(
             self.analyzer,
