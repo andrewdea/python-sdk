@@ -24,6 +24,7 @@ from cldk.models.c import (
     CppCallGraphEdge,
     CppNamespace,
     CppRecordKind,
+    SourceLocation,
     VariableFilter,
 )
 from cldk.analysis.c.process_parsed_file_treesitter import (
@@ -149,6 +150,8 @@ def enhance_analysis(app: CppApplication) -> CppApplication:
     for tu in app.translation_units:
         if len(tu.classes) > 0:
             continue
+
+        # Parse the source file itself
         tree = tree_sitter_cpp.parse_file(tu.file_path)
         for node in get_nodes_of_multiple_types(
             tree, ("class_specifier", "struct_specifier")
@@ -156,6 +159,36 @@ def enhance_analysis(app: CppApplication) -> CppApplication:
             node_class = process_class_from_node(node, file_path=tu.file_path)
             if node_class:
                 tu.classes.append(node_class)
+
+        # Also parse included header files to find class definitions
+        for include in tu.includes:
+            # Try to resolve the include path
+            header_path = Path(include.included_file)
+            if not header_path.exists():
+                # Try relative to the source file's directory
+                source_dir = Path(tu.file_path).parent
+                header_path = source_dir / include.included_file
+
+            if header_path.exists() and header_path.suffix in [
+                ".h",
+                ".hpp",
+                ".hxx",
+                ".hh",
+            ]:
+                try:
+                    header_tree = tree_sitter_cpp.parse_file(str(header_path))
+                    for node in get_nodes_of_multiple_types(
+                        header_tree, ("class_specifier", "struct_specifier")
+                    ):
+                        node_class = process_class_from_node(
+                            node, file_path=str(header_path)
+                        )
+                        if node_class:
+                            tu.classes.append(node_class)
+                except Exception:
+                    # Skip files that can't be parsed
+                    pass
+
     return app
 
 
@@ -599,6 +632,30 @@ class CppAnalysis:
                 for record in self._collect_namespace_records(ns):
                     if record.usr not in records_by_usr or record.is_definition:
                         records_by_usr[record.usr] = record
+
+            # Also include classes from tu.classes (populated by enhance_analysis)
+            for cpp_class in tu.classes:
+                # Convert CppClass to CppRecord
+                # Use class name as a simple USR since CppClass doesn't have USR
+                class_usr = f"class_{cpp_class.name}_{cpp_class.file_path}"
+                if class_usr not in records_by_usr:
+                    # Create a minimal CppRecord from CppClass
+                    record = CppRecord(
+                        name=cpp_class.name,
+                        qualified_name=cpp_class.name,
+                        usr=class_usr,
+                        kind=CppRecordKind.CLASS,
+                        location=SourceLocation(
+                            file=cpp_class.file_path,
+                            start_line=cpp_class.start_line,
+                            start_column=0,
+                            end_line=cpp_class.end_line,
+                            end_column=0,
+                        ),
+                        is_definition=True,
+                        is_declaration=True,
+                    )
+                    records_by_usr[class_usr] = record
 
         return list(records_by_usr.values())
 
