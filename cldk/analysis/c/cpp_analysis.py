@@ -639,7 +639,36 @@ class CppAnalysis:
                 # Use class name as a simple USR since CppClass doesn't have USR
                 class_usr = f"class_{cpp_class.name}_{cpp_class.file_path}"
                 if class_usr not in records_by_usr:
-                    # Create a minimal CppRecord from CppClass
+                    # Convert CppClass methods to CppFunction objects
+                    methods = []
+                    for method in cpp_class.methods:
+                        # Create a CppFunction from the method info
+                        func = CppFunction(
+                            name=method.name,
+                            qualified_name=f"{cpp_class.name}::{method.name}",
+                            usr=f"method_{cpp_class.name}_{method.name}",
+                            location=SourceLocation(
+                                file=cpp_class.file_path,
+                                start_line=method.start_line
+                                if hasattr(method, "start_line")
+                                else cpp_class.start_line,
+                                start_column=0,
+                                end_line=method.end_line
+                                if hasattr(method, "end_line")
+                                else cpp_class.start_line,
+                                end_column=0,
+                            ),
+                            return_type=method.return_type
+                            if hasattr(method, "return_type")
+                            else "void",
+                            parameters=[],
+                            is_definition=True,
+                            is_declaration=True,
+                            parent_record_usr=class_usr,
+                        )
+                        methods.append(func)
+
+                    # Create a CppRecord from CppClass with methods
                     record = CppRecord(
                         name=cpp_class.name,
                         qualified_name=cpp_class.name,
@@ -654,6 +683,7 @@ class CppAnalysis:
                         ),
                         is_definition=True,
                         is_declaration=True,
+                        methods=methods,
                     )
                     records_by_usr[class_usr] = record
 
