@@ -179,7 +179,7 @@ def get_function_name_from_declarator(declarator: Node) -> Optional[str]:
         str: Function name or None
     """
     for child in declarator.children:
-        if child.type == "identifier":
+        if child.type in ("identifier", "field_identifier", "destructor_name"):
             return child.text.decode('utf-8')
         elif child.type in ("function_declarator", "pointer_declarator"):
             # Recursive case for complex declarators
@@ -445,10 +445,22 @@ def process_class_from_node(node: Node, file_path: str) -> Optional[CppClass]:
             # Process class body
             for member in child.children:
                 if member.type == "field_declaration":
-                    var = extract_variable_from_node(member)
-                    if var:
-                        members.append(var)
-                elif member.type == "function_definition":
+                    # Check if this is a method declaration (has function_declarator child)
+                    has_function_declarator = any(
+                        c.type == "function_declarator" for c in member.children
+                    )
+                    if has_function_declarator:
+                        # This is a method declaration
+                        method = extract_function_from_node(member)
+                        if method:
+                            methods.append(method)
+                    else:
+                        # This is a member variable
+                        var = extract_variable_from_node(member)
+                        if var:
+                            members.append(var)
+                elif member.type in ("function_definition", "declaration"):
+                    # Handle function definitions and constructor/destructor declarations
                     method = extract_function_from_node(member)
                     if method:
                         methods.append(method)
